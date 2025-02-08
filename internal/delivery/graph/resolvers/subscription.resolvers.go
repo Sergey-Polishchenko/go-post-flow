@@ -6,7 +6,6 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
@@ -14,8 +13,17 @@ import (
 
 // CommentAdded is the resolver for the commentAdded field.
 func (r *subscriptionResolver) CommentAdded(ctx context.Context, postID string) (<-chan *model.Comment, error) {
-	// TODO: implement comment subscription
-	panic(fmt.Errorf("not implemented: CommentAdded - commentAdded"))
+	ch := make(chan *model.Comment, 1)
+
+	r.storage.RegisterCommentChannel(postID, ch)
+
+	go func() {
+		<-ctx.Done()
+		r.storage.UnregisterCommentChannel(postID, ch)
+		close(ch)
+	}()
+
+	return ch, nil
 }
 
 // Subscription returns generated.SubscriptionResolver implementation.

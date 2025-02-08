@@ -18,7 +18,14 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.PostInput
 
 // CreateComment is the resolver for the createComment field.
 func (r *mutationResolver) CreateComment(ctx context.Context, input model.CommentInput) (*model.Comment, error) {
-	return r.storage.CreateComment(input)
+	comment, err := r.storage.CreateComment(input)
+	if err != nil {
+		return nil, err
+	}
+
+	r.storage.BroadcastComment(comment)
+
+	return comment, nil
 }
 
 // CreateUser is the resolver for the createUser field.

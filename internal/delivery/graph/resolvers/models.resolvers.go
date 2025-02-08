@@ -6,19 +6,35 @@ package resolvers
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
+	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/errors"
 )
 
 // Children is the resolver for the children field.
 func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limit *int, offset *int) ([]*model.Comment, error) {
-	return r.storage.GetChildren(obj.ID, limit, offset)
+	children, err := r.storage.GetChildren(obj.ID, limit, offset)
+	if err != nil {
+		if errors.Is(err, reperrors.ErrCommentChildrenNotFound) {
+			return []*model.Comment{}, nil
+		}
+		return nil, err
+	}
+	return children, nil
 }
 
 // Comments is the resolver for the comments field.
 func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int, offset *int) ([]*model.Comment, error) {
-	return r.storage.GetComments(obj.ID, limit, offset)
+	comments, err := r.storage.GetComments(obj.ID, limit, offset)
+	if err != nil {
+		if errors.Is(err, reperrors.ErrCommentNotFound) {
+			return []*model.Comment{}, nil
+		}
+		return nil, err
+	}
+	return comments, nil
 }
 
 // Comment returns generated.CommentResolver implementation.
