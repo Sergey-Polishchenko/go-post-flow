@@ -1,0 +1,9 @@
+# MacOS crap
+.DS_STORE
+
+# Local .env
+.env
+
+# gqlgen generated files
+internal/delivery/graph/generated/*.go
+internal/delivery/graph/model/*.go
