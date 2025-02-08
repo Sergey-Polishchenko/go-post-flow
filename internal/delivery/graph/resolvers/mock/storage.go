@@ -48,3 +48,15 @@ func (m *MockStorage) CreateUser(input model.UserInput) (*model.User, error) {
 	args := m.Called(input)
 	return args.Get(0).(*model.User), args.Error(1)
 }
+
+func (m *MockStorage) RegisterCommentChannel(postID string, ch chan *model.Comment) {
+	m.Called(postID, ch)
+}
+
+func (m *MockStorage) UnregisterCommentChannel(postID string, ch chan *model.Comment) {
+	m.Called(postID, ch)
+}
+
+func (m *MockStorage) BroadcastComment(comment *model.Comment) {
+	m.Called(comment)
+}
