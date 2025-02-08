@@ -38,10 +38,16 @@ func Test_mutationResolver_CreatePost(t *testing.T) {
 
 func Test_mutationResolver_CreateComment(t *testing.T) {
 	mockStorage := new(mock.MockStorage)
-	mockComment := &model.Comment{ID: "1", Text: "New Comment"}
-	input := model.CommentInput{Text: "New Comment"}
+	mockComment := &model.Comment{ID: "1", Text: "New Comment", Post: &model.Post{ID: "post_1"}}
+	input := model.CommentInput{
+		Text:     "New Comment",
+		PostID:   "post_1",
+		AuthorID: "user_1",
+	}
 
+	// Настройка ожиданий
 	mockStorage.On("CreateComment", input).Return(mockComment, nil)
+	mockStorage.On("BroadcastComment", mockComment).Once()
 
 	r := &mutationResolver{
 		Resolver: &Resolver{
@@ -61,6 +67,8 @@ func Test_mutationResolver_CreateComment(t *testing.T) {
 	}
 
 	mockStorage.AssertCalled(t, "CreateComment", input)
+	mockStorage.AssertCalled(t, "BroadcastComment", mockComment)
+	mockStorage.AssertExpectations(t)
 }
 
 func Test_mutationResolver_CreateUser(t *testing.T) {
