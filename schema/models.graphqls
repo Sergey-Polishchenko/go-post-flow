@@ -10,6 +10,7 @@ type Post {
 type Comment {
   id: ID!
   text: String!
+  post: Post!
   author: User!
   children(limit: Int, offset: Int): [Comment!]!
   createdAt: String!
@@ -29,6 +30,7 @@ input PostInput {
 
 input CommentInput {
   text: String!
+  postId: ID!
   authorId: ID!
   parentId: ID
 }
