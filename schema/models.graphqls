@@ -1,0 +1,38 @@
+type Post {
+  id: ID!
+  title: String!
+  content: String!
+  author: User!
+  allowComments: Boolean!
+  comments(limit: Int, offset: Int): [Comment!]!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  author: User!
+  children(limit: Int, offset: Int): [Comment!]!
+  createdAt: String!
+}
+
+type User {
+  id: ID!
+  name: String!
+}
+
+input PostInput {
+  title: String!
+  content: String!
+  authorId: ID!
+  allowComments: Boolean!
+}
+
+input CommentInput {
+  text: String!
+  authorId: ID!
+  parentId: ID
+}
+
+input UserInput {
+  name: String!
+}

@@ -1,0 +1,5 @@
+type Mutation {
+  createPost(input: PostInput!): Post!
+  createComment(input: CommentInput!): Comment!
+  createUser(input: UserInput!): User!
+}

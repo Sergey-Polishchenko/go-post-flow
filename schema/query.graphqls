@@ -1,0 +1,4 @@
+type Query {
+  post(id: ID!): Post
+  posts(limit: Int, offset: Int): [Post!]!
+}

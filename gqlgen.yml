@@ -1,0 +1,37 @@
+schema:
+  - schema/*.graphqls
+
+exec:
+  package: generated
+  filename: internal/delivery/graph/generated/generated.go
+
+model:
+  filename: internal/delivery/graph/model/models_gen.go
+  package: model
+
+resolver:
+  layout: follow-schema
+  dir: internal/delivery/graph/resolvers
+  package: resolvers
+  filename_template: "{name}.resolvers.go"
+
+autobind:
+
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+  UUID:
+    model:
+      - github.com/google/uuid.UUID
+
+  Post:
+    fields:
+      comments:
+        resolver: true
+
+  Comment:
+    fields:
+      children:
+        resolver: true
+
