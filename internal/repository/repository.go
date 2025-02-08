@@ -16,6 +16,10 @@ type Storage interface {
 	CreatePost(input model.PostInput) (*model.Post, error)
 	CreateComment(input model.CommentInput) (*model.Comment, error)
 	CreateUser(input model.UserInput) (*model.User, error)
+
+	BroadcastComment(comment *model.Comment)
+	RegisterCommentChannel(postID string, ch chan *model.Comment)
+	UnregisterCommentChannel(postID string, ch chan *model.Comment)
 }
 
 func LoadStorage(isInmemory bool) Storage {
