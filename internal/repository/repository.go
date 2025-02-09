@@ -3,6 +3,7 @@ package repository
 import (
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	inmemory "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/in-memory"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/repository/postgres"
 )
 
 type Storage interface {
@@ -26,6 +27,5 @@ func LoadStorage(isInmemory bool, connStr string) (Storage, error) {
 	if isInmemory {
 		return inmemory.NewStorage(), nil
 	}
-	// return postgres.NewStorage(connStr)
-	return nil, nil
+	return postgres.NewStorage(connStr)
 }
