@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"time"
@@ -11,13 +12,14 @@ import (
 
 func (s *PostgresStorage) CreateComment(input model.CommentInput) (*model.Comment, error) {
 	var commentID string
+	var createdAt time.Time
 	query := `
         INSERT INTO comments (text, author_id, post_id, parent_id)
         VALUES ($1, $2, $3, $4)
-        RETURNING id
+        RETURNING id, created_at
     `
 	err := s.db.QueryRow(query, input.Text, input.AuthorID, input.PostID, input.ParentID).
-		Scan(&commentID)
+		Scan(&commentID, &createdAt)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create comment: %w", err)
 	}
@@ -37,49 +39,57 @@ func (s *PostgresStorage) CreateComment(input model.CommentInput) (*model.Commen
 		Text:      input.Text,
 		Author:    author,
 		Post:      post,
-		CreatedAt: time.Now().Format(time.RFC3339),
-	}
-
-	if input.ParentID != nil {
-		parent, err := s.GetComment(*input.ParentID)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get parent comment: %w", err)
-		}
-		parent.Children = append(parent.Children, comment)
-	} else {
-		post.Comments = append(post.Comments, comment)
+		CreatedAt: createdAt.Format(time.RFC3339),
 	}
 
 	s.BroadcastComment(comment)
-
 	return comment, nil
 }
 
 func (s *PostgresStorage) GetComment(id string) (*model.Comment, error) {
 	query := `
-			SELECT id, text, author_id, created_at
-			FROM comments
-			WHERE id = $1
-	`
-	rows, err := s.db.Query(query, id)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get comments: %w", err)
-	}
-	defer rows.Close()
-
+        SELECT c.id, c.text, c.author_id, u.name AS author_name, c.post_id, c.created_at
+        FROM comments c
+        JOIN users u ON c.author_id = u.id
+        WHERE c.id = $1
+    `
 	var comment model.Comment
-	if err := rows.Scan(&comment.ID, &comment.Text, &comment.Author.ID, &comment.CreatedAt); err != nil {
-		return nil, fmt.Errorf("failed to scan comment: %w", err)
+	var authorID, authorName, postID string
+	var createdAt time.Time
+
+	err := s.db.QueryRow(query, id).Scan(
+		&comment.ID,
+		&comment.Text,
+		&authorID,
+		&authorName,
+		&postID,
+		&createdAt,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, reperrors.ErrCommentNotFound
+		}
+		return nil, fmt.Errorf("failed to get comment: %w", err)
 	}
+
+	post, err := s.GetPost(postID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get post: %w", err)
+	}
+
+	comment.Author = &model.User{ID: authorID, Name: authorName}
+	comment.Post = post
+	comment.CreatedAt = createdAt.Format(time.RFC3339)
 
 	return &comment, nil
 }
 
 func (s *PostgresStorage) GetComments(postID string) ([]*model.Comment, error) {
 	query := `
-        SELECT id, text, author_id, created_at
-        FROM comments
-        WHERE post_id = $1 AND parent_id IS NULL
+        SELECT c.id, c.text, c.author_id, u.name AS author_name, c.created_at, c.post_id
+        FROM comments c
+        JOIN users u ON c.author_id = u.id
+        WHERE c.post_id = $1 AND c.parent_id IS NULL
     `
 	rows, err := s.db.Query(query, postID)
 	if err != nil {
@@ -90,56 +100,59 @@ func (s *PostgresStorage) GetComments(postID string) ([]*model.Comment, error) {
 	var comments []*model.Comment
 	for rows.Next() {
 		var comment model.Comment
-		var authorID string
-		if err := rows.Scan(&comment.ID, &comment.Text, &authorID, &comment.CreatedAt); err != nil {
+		var authorID, authorName, postID string
+		var createdAt time.Time
+		err := rows.Scan(&comment.ID, &comment.Text, &authorID, &authorName, &createdAt, &postID)
+		if err != nil {
 			return nil, fmt.Errorf("failed to scan comment: %w", err)
 		}
 
-		author, err := s.GetUser(authorID)
+		post, err := s.GetPost(postID)
 		if err != nil {
-			return nil, reperrors.ErrAuthorNotFound
+			return nil, fmt.Errorf("failed to get post: %w", err)
 		}
-		comment.Author = author
 
+		comment.Author = &model.User{ID: authorID, Name: authorName}
+		comment.Post = post
+		comment.CreatedAt = createdAt.Format(time.RFC3339)
 		comments = append(comments, &comment)
 	}
-
 	return comments, nil
 }
 
 func (s *PostgresStorage) GetChildren(commentID string) ([]*model.Comment, error) {
 	query := `
-        SELECT id, text, author_id, created_at
-        FROM comments
-        WHERE parent_id = $1
+        SELECT c.id, c.text, c.author_id, u.name AS author_name, c.created_at, c.post_id
+        FROM comments c
+        JOIN users u ON c.author_id = u.id
+        WHERE c.parent_id = $1
     `
 	rows, err := s.db.Query(query, commentID)
 	if err != nil {
-		return nil, reperrors.ErrCommentChildrenNotFound
+		return nil, fmt.Errorf("failed to get children: %w", err)
 	}
 	defer rows.Close()
 
 	var children []*model.Comment
 	for rows.Next() {
 		var comment model.Comment
-		var authorID string
-		if err := rows.Scan(&comment.ID, &comment.Text, &authorID, &comment.CreatedAt); err != nil {
+		var authorID, authorName, postID string
+		var createdAt time.Time
+		err := rows.Scan(&comment.ID, &comment.Text, &authorID, &authorName, &createdAt, &postID)
+		if err != nil {
 			return nil, fmt.Errorf("failed to scan comment: %w", err)
 		}
 
-		author, err := s.GetUser(authorID)
+		post, err := s.GetPost(postID)
 		if err != nil {
-			return nil, reperrors.ErrAuthorNotFound
+			return nil, fmt.Errorf("failed to get post: %w", err)
 		}
-		comment.Author = author
 
+		comment.Author = &model.User{ID: authorID, Name: authorName}
+		comment.Post = post
+		comment.CreatedAt = createdAt.Format(time.RFC3339)
 		children = append(children, &comment)
 	}
-
-	if len(children) == 0 {
-		return nil, reperrors.ErrCommentChildrenNotFound
-	}
-
 	return children, nil
 }
 
@@ -156,7 +169,7 @@ func (s *PostgresStorage) UnregisterCommentChannel(postID string, ch chan *model
 	for i, c := range channels {
 		if c == ch {
 			s.commentChannels[postID] = append(channels[:i], channels[i+1:]...)
-			return
+			break
 		}
 	}
 }
@@ -164,8 +177,7 @@ func (s *PostgresStorage) UnregisterCommentChannel(postID string, ch chan *model
 func (s *PostgresStorage) BroadcastComment(comment *model.Comment) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	channels := s.commentChannels[comment.Post.ID]
-	for _, ch := range channels {
+	for _, ch := range s.commentChannels[comment.Post.ID] {
 		select {
 		case ch <- comment:
 		default:
