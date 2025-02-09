@@ -17,14 +17,17 @@ import (
 )
 
 func main() {
-	cfg, err := config.GetConfig()
+	flags := config.ParseFlags()
+
+	env, err := config.GetConfig(flags.InMemory)
 	if err != nil {
 		log.Fatalf("cant load env: %s", err)
 	}
-	port := cfg.Port
 
-	// TODO: repository selection
-	storage, err := repository.LoadStorage(true, "")
+	port := env.Port
+	connStr := env.DB.ConnStr()
+
+	storage, err := repository.LoadStorage(flags.InMemory, connStr)
 	if err != nil {
 		log.Fatal("cant load storage")
 	}
