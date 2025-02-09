@@ -4,7 +4,12 @@ type Post {
   content: String!
   author: User!
   allowComments: Boolean!
-  comments(limit: Int, offset: Int): [Comment!]!
+  comments(
+  limit: Int
+  offset: Int
+  depth: Int = 1
+  expand: Boolean = false
+  ): [Comment!]!
 }
 
 type Comment {
@@ -12,7 +17,12 @@ type Comment {
   text: String!
   post: Post!
   author: User!
-  children(limit: Int, offset: Int): [Comment!]!
+  children(
+    limit: Int
+    offset: Int
+    depth: Int = 1
+    expand: Boolean = false
+  ): [Comment!]!
   createdAt: String!
 }
 
