@@ -8,4 +8,5 @@ var (
 	ErrCommentNotFound         = fmt.Errorf("comment not found")
 	ErrParentCommentNotFound   = fmt.Errorf("parent comment not found")
 	ErrCommentChildrenNotFound = fmt.Errorf("comment children not found")
+	ErrCommentTooLong          = fmt.Errorf("comment too long")
 )
