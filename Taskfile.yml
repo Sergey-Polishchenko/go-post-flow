@@ -1,0 +1,29 @@
+version: "3"
+
+dotenv: ['.env']
+
+tasks:
+  build:
+    desc: Build the application
+    cmds:
+      - docker build -t myapp .
+
+  run:
+    desc: Run the application with docker
+    cmds:
+      - docker run -p 8080:8080 myapp {{.CLI_ARGS}}
+
+  up:
+    desc: Start the application with docker-compose
+    cmds:
+      - docker-compose up --build
+
+  down:
+    desc: Stop the application
+    cmds:
+      - docker-compose down
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./...
