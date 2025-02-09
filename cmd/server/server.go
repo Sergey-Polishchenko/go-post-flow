@@ -25,7 +25,11 @@ func main() {
 	}
 
 	port := env.Port
-	connStr := env.DB.ConnStr()
+
+	var connStr string
+	if env.DB != nil {
+		connStr = env.DB.ConnStr()
+	}
 
 	storage, err := repository.LoadStorage(flags.InMemory, connStr)
 	if err != nil {
