@@ -4,7 +4,10 @@ go 1.23.4
 
 require (
 	github.com/99designs/gqlgen v0.17.64
+	github.com/caarlos0/env/v10 v10.0.0
 	github.com/gorilla/websocket v1.5.0
+	github.com/joho/godotenv v1.5.1
+	github.com/lib/pq v1.10.9
 	github.com/stretchr/testify v1.10.0
 	github.com/urfave/cli/v2 v2.27.5
 	github.com/vektah/gqlparser/v2 v2.5.22

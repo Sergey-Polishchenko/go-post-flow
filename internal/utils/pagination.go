@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/errors"
+	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 func ApplyPagination[T any](data []*T, limit, offset *int) []*T {

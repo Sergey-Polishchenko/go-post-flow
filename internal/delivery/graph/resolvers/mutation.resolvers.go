@@ -9,7 +9,7 @@ import (
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/errors"
+	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 const comLim = 2000

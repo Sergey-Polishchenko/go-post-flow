@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	inmemory "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/in_memory"
+	inmemory "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/in-memory"
 )
 
 type Storage interface {
@@ -22,9 +22,10 @@ type Storage interface {
 	UnregisterCommentChannel(postID string, ch chan *model.Comment)
 }
 
-func LoadStorage(isInmemory bool) Storage {
+func LoadStorage(isInmemory bool, connStr string) (Storage, error) {
 	if isInmemory {
-		return inmemory.NewStorage()
+		return inmemory.NewStorage(), nil
 	}
-	return nil
+	// return postgres.NewStorage(connStr)
+	return nil, nil
 }

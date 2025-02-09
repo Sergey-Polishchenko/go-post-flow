@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/errors"
+	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 func (s *InMemoryStorage) CreatePost(input model.PostInput) (*model.Post, error) {
