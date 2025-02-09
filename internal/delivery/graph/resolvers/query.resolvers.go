@@ -6,9 +6,12 @@ package resolvers
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
+	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/utils"
 )
 
 // Post is the resolver for the post field.
@@ -18,7 +21,15 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*model.Post, error
 
 // Posts is the resolver for the posts field.
 func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*model.Post, error) {
-	return r.storage.GetPosts(limit, offset)
+	posts, err := r.storage.GetPosts(limit, offset)
+	if err != nil {
+		if errors.Is(err, reperrors.ErrCommentChildrenNotFound) {
+			return []*model.Post{}, nil
+		}
+		return nil, err
+	}
+	paginated := utils.ApplyPagination(posts, limit, offset)
+	return paginated, nil
 }
 
 // Query returns generated.QueryResolver implementation.

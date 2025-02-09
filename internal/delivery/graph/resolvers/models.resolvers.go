@@ -11,30 +11,55 @@ import (
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/utils"
 )
 
 // Children is the resolver for the children field.
-func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limit *int, offset *int) ([]*model.Comment, error) {
-	children, err := r.storage.GetChildren(obj.ID, limit, offset)
+func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limit *int, offset *int, depth *int, expand *bool) ([]*model.Comment, error) {
+	children, err := r.storage.GetChildren(obj.ID)
 	if err != nil {
 		if errors.Is(err, reperrors.ErrCommentChildrenNotFound) {
 			return []*model.Comment{}, nil
 		}
 		return nil, err
 	}
-	return children, nil
+
+	paginated := utils.ApplyPagination(children, limit, offset)
+
+	if expand != nil && *expand {
+		return utils.ProcessCommentsWithDepth(
+			paginated,
+			depth,
+			r.storage.GetChildren,
+			*expand,
+		)
+	}
+
+	return paginated, nil
 }
 
 // Comments is the resolver for the comments field.
-func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int, offset *int) ([]*model.Comment, error) {
-	comments, err := r.storage.GetComments(obj.ID, limit, offset)
+func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int, offset *int, depth *int, expand *bool) ([]*model.Comment, error) {
+	comments, err := r.storage.GetComments(obj.ID)
 	if err != nil {
 		if errors.Is(err, reperrors.ErrCommentNotFound) {
 			return []*model.Comment{}, nil
 		}
 		return nil, err
 	}
-	return comments, nil
+
+	paginated := utils.ApplyPagination(comments, limit, offset)
+
+	if expand != nil && *expand {
+		return utils.ProcessCommentsWithDepth(
+			paginated,
+			depth,
+			r.storage.GetChildren,
+			*expand,
+		)
+	}
+
+	return paginated, nil
 }
 
 // Comment returns generated.CommentResolver implementation.
