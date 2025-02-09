@@ -6,6 +6,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
     volumes:
       - ./.env:/app/.env
     networks:
@@ -30,6 +32,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  migrations:
+    image: migrate/migrate:v4.17.0
+    command: -path /migrations -database postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?sslmode=disable up
+    volumes:
+      - ./migrations:/migrations
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app_network
 
 volumes:
   postgres_data:
