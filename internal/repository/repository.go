@@ -10,8 +10,8 @@ type Storage interface {
 	GetPosts(limit, offset *int) ([]*model.Post, error)
 	GetUser(id string) (*model.User, error)
 
-	GetComments(postID string, limit, offset *int) ([]*model.Comment, error)
-	GetChildren(commentID string, limit, offset *int) ([]*model.Comment, error)
+	GetComments(postID string) ([]*model.Comment, error)
+	GetChildren(commentID string) ([]*model.Comment, error)
 
 	CreatePost(input model.PostInput) (*model.Post, error)
 	CreateComment(input model.CommentInput) (*model.Comment, error)

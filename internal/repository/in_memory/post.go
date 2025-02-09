@@ -5,7 +5,6 @@ import (
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/errors"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/utils"
 )
 
 func (s *InMemoryStorage) CreatePost(input model.PostInput) (*model.Post, error) {
@@ -38,7 +37,7 @@ func (s *InMemoryStorage) GetPosts(limit, offset *int) ([]*model.Post, error) {
 		posts = append(posts, post)
 	}
 
-	return utils.ApplyPagination(posts, limit, offset), nil
+	return posts, nil
 }
 
 func (s *InMemoryStorage) GetPost(id string) (*model.Post, error) {
@@ -53,7 +52,7 @@ func (s *InMemoryStorage) GetPost(id string) (*model.Post, error) {
 	return post, nil
 }
 
-func (s *InMemoryStorage) GetComments(postID string, limit, offset *int) ([]*model.Comment, error) {
+func (s *InMemoryStorage) GetComments(postID string) ([]*model.Comment, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -62,5 +61,5 @@ func (s *InMemoryStorage) GetComments(postID string, limit, offset *int) ([]*mod
 		return nil, reperrors.ErrPostNotFound
 	}
 
-	return utils.ApplyPagination(post.Comments, limit, offset), nil
+	return post.Comments, nil
 }

@@ -6,7 +6,6 @@ import (
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/errors"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/utils"
 )
 
 func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Comment, error) {
@@ -46,10 +45,7 @@ func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Commen
 	return comment, nil
 }
 
-func (s *InMemoryStorage) GetChildren(
-	commentID string,
-	limit, offset *int,
-) ([]*model.Comment, error) {
+func (s *InMemoryStorage) GetChildren(commentID string) ([]*model.Comment, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	comment, exists := s.Comments[commentID]
@@ -61,7 +57,7 @@ func (s *InMemoryStorage) GetChildren(
 		return nil, reperrors.ErrCommentChildrenNotFound
 	}
 
-	return utils.ApplyPagination(comment.Children, limit, offset), nil
+	return comment.Children, nil
 }
 
 func (s *InMemoryStorage) RegisterCommentChannel(postID string, ch chan *model.Comment) {
