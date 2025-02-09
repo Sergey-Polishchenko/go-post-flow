@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -11,22 +10,24 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/websocket"
 
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/config"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/resolvers"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/repository"
 )
 
-const defaultPort = "8080"
-
 func main() {
-	// TODO: make custom config
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
+	cfg, err := config.GetConfig()
+	if err != nil {
+		log.Fatalf("cant load env: %s", err)
 	}
+	port := cfg.Port
 
 	// TODO: repository selection
-	storage := repository.LoadStorage(true)
+	storage, err := repository.LoadStorage(true, "")
+	if err != nil {
+		log.Fatal("cant load storage")
+	}
 
 	execSchema := generated.NewExecutableSchema(
 		generated.Config{
