@@ -8,6 +8,8 @@ var (
 	ErrPostNotFound            = fmt.Errorf("post not found")
 	ErrCommentNotFound         = fmt.Errorf("comment not found")
 	ErrParentCommentNotFound   = fmt.Errorf("parent comment not found")
+	ErrParentInOtherPost       = fmt.Errorf("parent comment not in same post")
+	ErrCommentsNotFound        = fmt.Errorf("comments not found")
 	ErrCommentChildrenNotFound = fmt.Errorf("comment children not found")
 	ErrCommentTooLong          = fmt.Errorf("comment too long")
 	ErrCommentsNotAllowed      = fmt.Errorf("post not allows comments")
@@ -15,6 +17,10 @@ var (
 	ErrPingDatabase = fmt.Errorf("failed to ping database")
 
 	ErrEnvParsing = fmt.Errorf("failed to parse environment variables")
+
+	ErrPostLoaderNotFound    = fmt.Errorf("post loader not found")
+	ErrCommentLoaderNotFound = fmt.Errorf("comment loader not found")
+	ErrUserLoaderNotFound    = fmt.Errorf("user loader not found")
 )
 
 type SQLQueryLoadingError struct {
