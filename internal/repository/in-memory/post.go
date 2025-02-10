@@ -2,6 +2,7 @@ package inmemory
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
@@ -36,6 +37,10 @@ func (s *InMemoryStorage) GetPosts(limit, offset *int) ([]*model.Post, error) {
 	for _, post := range s.Posts {
 		posts = append(posts, post)
 	}
+
+	sort.Slice(posts, func(i, j int) bool {
+		return posts[i].ID < posts[j].ID
+	})
 
 	return posts, nil
 }
