@@ -1,0 +1,20 @@
+mutation CreateComment {
+  createComment(
+    input: {
+      text: "",
+      postId: "",
+      authorId: "",
+      #parentId: "",
+    }
+  ) {
+    id
+    text
+    author {
+      id
+      name
+    }
+    children(limit: 0, offset: 0, depth: 0, expand: false) {
+      # ...
+    }
+  }
+}

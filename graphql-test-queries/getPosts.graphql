@@ -1,0 +1,23 @@
+query GetPosts {
+  posts {
+    id
+    title
+    content
+    author {
+      id
+      name
+    }
+    allowComments
+    comments(limit: 0, offset: 0, depth: 0, expand: false) {
+      id
+      text
+      author {
+        id
+        name
+      }
+      children(limit: 0, offset: 0, depth: 0, expand: false) {
+        # ...
+      }
+    }
+  }
+}
