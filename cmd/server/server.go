@@ -24,8 +24,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	port := env.Port
-
 	var connStr string
 	if env.DB != nil {
 		connStr = env.DB.ConnStr()
@@ -62,6 +60,6 @@ func main() {
 	http.Handle("/", playground.Handler("GraphQL Playground", "/query"))
 	http.Handle("/query", srv)
 
-	log.Printf("🚀 Server ready at http://localhost:%s/", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Printf("🚀 Server ready at http://localhost:%s/", env.Port)
+	log.Fatal(http.ListenAndServe(":"+env.Port, nil))
 }
