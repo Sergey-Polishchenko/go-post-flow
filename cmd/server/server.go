@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/config"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/dataloaders"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/resolvers"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/repository"
@@ -58,7 +59,7 @@ func main() {
 	srv.AddTransport(transport.MultipartForm{})
 
 	http.Handle("/", playground.Handler("GraphQL Playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query", dataloaders.Middleware(storage)(srv))
 
 	log.Printf("🚀 Server ready at http://localhost:%s/", env.Port)
 	log.Fatal(http.ListenAndServe(":"+env.Port, nil))
