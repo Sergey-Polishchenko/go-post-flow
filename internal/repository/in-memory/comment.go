@@ -19,7 +19,10 @@ func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Commen
 
 	post, exists := s.Posts[input.PostID]
 	if !exists {
-		return nil, nil
+		return nil, reperrors.ErrPostNotFound
+	}
+	if !post.AllowComments {
+		return nil, fmt.Errorf("post not allows comments")
 	}
 
 	comment := &model.Comment{

@@ -36,6 +36,9 @@ func (s *PostgresStorage) CreateComment(input model.CommentInput) (*model.Commen
 	if err != nil {
 		return nil, fmt.Errorf("failed to get post: %w", err)
 	}
+	if !post.AllowComments {
+		return nil, fmt.Errorf("post not allows comments")
+	}
 
 	comment := &model.Comment{
 		ID:        commentID,
