@@ -1,7 +1,5 @@
 version: "3"
 
-dotenv: ['.env']
-
 tasks:
   build:
     desc: Build the application
@@ -19,8 +17,6 @@ tasks:
       - build
     cmds:
       - docker run -p 8080:8080 myapp --inmemory
-
-
 
   up:
     desc: Start the application with docker-compose
