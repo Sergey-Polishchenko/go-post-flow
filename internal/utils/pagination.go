@@ -8,7 +8,7 @@ import (
 )
 
 func ApplyPagination[T any](data []*T, limit, offset *int) []*T {
-	start := 0
+	var start int
 	if offset != nil {
 		start = *offset
 	}
@@ -31,19 +31,19 @@ func ApplyPagination[T any](data []*T, limit, offset *int) []*T {
 func ProcessCommentsWithDepth(
 	comments []*model.Comment,
 	maxDepth *int,
-	getChildren func(string) ([]*model.Comment, error),
 	expand bool,
+	getChildren func(string) ([]*model.Comment, error),
 ) ([]*model.Comment, error) {
 	result := make([]*model.Comment, 0, len(comments))
 
-	currentDepth := 0
+	var depth int
 	if maxDepth != nil {
-		currentDepth = *maxDepth
+		depth = *maxDepth
 	}
 
 	for _, c := range comments {
 		cloned := *c
-		if currentDepth > 0 && expand {
+		if depth > 0 && expand {
 			children, err := getChildren(c.ID)
 			if err != nil {
 				if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) ||
@@ -53,12 +53,12 @@ func ProcessCommentsWithDepth(
 				return nil, err
 			}
 
-			childDepth := currentDepth - 1
+			childDepth := depth - 1
 			clonedChildren, err := ProcessCommentsWithDepth(
 				children,
 				&childDepth,
-				getChildren,
 				expand,
+				getChildren,
 			)
 			if err != nil {
 				return nil, err

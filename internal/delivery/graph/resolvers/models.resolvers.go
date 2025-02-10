@@ -30,8 +30,8 @@ func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limi
 		return utils.ProcessCommentsWithDepth(
 			paginated,
 			depth,
-			r.storage.GetChildren,
 			*expand,
+			r.storage.GetChildren,
 		)
 	}
 
@@ -54,8 +54,8 @@ func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int
 		return utils.ProcessCommentsWithDepth(
 			paginated,
 			depth,
-			r.storage.GetChildren,
 			*expand,
+			r.storage.GetChildren,
 		)
 	}
 
