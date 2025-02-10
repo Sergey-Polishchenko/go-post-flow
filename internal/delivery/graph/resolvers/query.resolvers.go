@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/dataloaders"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
@@ -16,7 +17,11 @@ import (
 
 // Post is the resolver for the post field.
 func (r *queryResolver) Post(ctx context.Context, id string) (*model.Post, error) {
-	return r.storage.GetPost(id)
+	loader, ok := ctx.Value(dataloaders.PostLoaderKey).(*dataloaders.PostLoader)
+	if !ok {
+		return nil, flowerrors.ErrPostLoaderNotFound
+	}
+	return loader.Load(ctx, id)
 }
 
 // Posts is the resolver for the posts field.
@@ -34,12 +39,20 @@ func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*
 
 // Comment is the resolver for the comment field.
 func (r *queryResolver) Comment(ctx context.Context, id string) (*model.Comment, error) {
-	return r.storage.GetComment(id)
+	loader, ok := ctx.Value(dataloaders.CommentLoaderKey).(*dataloaders.CommentLoader)
+	if !ok {
+		return nil, flowerrors.ErrPostLoaderNotFound
+	}
+	return loader.Load(ctx, id)
 }
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	return r.storage.GetUser(id)
+	loader, ok := ctx.Value(dataloaders.UserLoaderKey).(*dataloaders.UserLoader)
+	if !ok {
+		return nil, flowerrors.ErrPostLoaderNotFound
+	}
+	return loader.Load(ctx, id)
 }
 
 // Query returns generated.QueryResolver implementation.

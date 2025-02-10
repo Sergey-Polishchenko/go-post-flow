@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/dataloaders"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
@@ -16,8 +17,18 @@ import (
 
 // Children is the resolver for the children field.
 func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limit *int, offset *int, depth *int, expand *bool) ([]*model.Comment, error) {
-	children, err := r.storage.GetChildren(obj.ID)
+	childrenIDs, err := r.storage.GetChildrenIDs(obj.ID)
 	if err != nil {
+		return nil, err
+	}
+
+	loader, ok := ctx.Value(dataloaders.CommentLoaderKey).(*dataloaders.CommentLoader)
+	if !ok {
+		return nil, flowerrors.ErrCommentLoaderNotFound
+	}
+
+	children, errs := loader.LoadAll(ctx, childrenIDs)
+	if errs[0] != nil {
 		if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
 			return []*model.Comment{}, nil
 		}
@@ -28,10 +39,12 @@ func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limi
 
 	if expand != nil && *expand {
 		return utils.ProcessCommentsWithDepth(
+			ctx,
 			paginated,
 			depth,
 			*expand,
-			r.storage.GetChildren,
+			r.storage.GetChildrenIDs,
+			r.storage.GetCommentsByIDs,
 		)
 	}
 
@@ -40,8 +53,18 @@ func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limi
 
 // Comments is the resolver for the comments field.
 func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int, offset *int, depth *int, expand *bool) ([]*model.Comment, error) {
-	comments, err := r.storage.GetComments(obj.ID)
+	commentsIDs, err := r.storage.GetCommentsIDs(obj.ID)
 	if err != nil {
+		return nil, err
+	}
+
+	loader, ok := ctx.Value(dataloaders.CommentLoaderKey).(*dataloaders.CommentLoader)
+	if !ok {
+		return nil, flowerrors.ErrCommentLoaderNotFound
+	}
+
+	comments, errs := loader.LoadAll(ctx, commentsIDs)
+	if errs[0] != nil {
 		if errors.Is(err, flowerrors.ErrCommentNotFound) {
 			return []*model.Comment{}, nil
 		}
@@ -52,10 +75,12 @@ func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int
 
 	if expand != nil && *expand {
 		return utils.ProcessCommentsWithDepth(
+			ctx,
 			paginated,
 			depth,
 			*expand,
-			r.storage.GetChildren,
+			r.storage.GetChildrenIDs,
+			r.storage.GetCommentsByIDs,
 		)
 	}
 
