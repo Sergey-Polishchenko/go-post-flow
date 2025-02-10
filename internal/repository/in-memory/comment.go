@@ -48,10 +48,20 @@ func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Commen
 	return comment, nil
 }
 
-func (s *InMemoryStorage) GetChildren(commentID string) ([]*model.Comment, error) {
+func (s *InMemoryStorage) GetComment(id string) (*model.Comment, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	comment, exists := s.Comments[commentID]
+	comment, exists := s.Comments[id]
+	if !exists {
+		return nil, errors.ErrCommentNotFound
+	}
+	return comment, nil
+}
+
+func (s *InMemoryStorage) GetChildren(id string) ([]*model.Comment, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	comment, exists := s.Comments[id]
 	if !exists {
 		return nil, errors.ErrCommentNotFound
 	}

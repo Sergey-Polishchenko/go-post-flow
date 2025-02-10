@@ -9,6 +9,7 @@ import (
 type Storage interface {
 	GetPost(id string) (*model.Post, error)
 	GetPosts(limit, offset *int) ([]*model.Post, error)
+	GetComment(id string) (*model.Comment, error)
 	GetUser(id string) (*model.User, error)
 
 	GetComments(postID string) ([]*model.Comment, error)

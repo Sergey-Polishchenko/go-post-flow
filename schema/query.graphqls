@@ -1,4 +1,6 @@
 type Query {
-  post(id: ID!): Post
+  post(id: ID!): Post!
   posts(limit: Int, offset: Int): [Post!]!
+  comment(id: ID!): Comment!
+  user(id: ID!): User!
 }
