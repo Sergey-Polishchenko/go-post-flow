@@ -32,6 +32,16 @@ func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*
 	return paginated, nil
 }
 
+// Comment is the resolver for the comment field.
+func (r *queryResolver) Comment(ctx context.Context, id string) (*model.Comment, error) {
+	return r.storage.GetComment(id)
+}
+
+// User is the resolver for the user field.
+func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+	return r.storage.GetUser(id)
+}
+
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
