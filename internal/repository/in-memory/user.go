@@ -1,10 +1,10 @@
 package inmemory
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 func (s *InMemoryStorage) CreateUser(input model.UserInput) (*model.User, error) {
@@ -19,13 +19,13 @@ func (s *InMemoryStorage) CreateUser(input model.UserInput) (*model.User, error)
 	return user, nil
 }
 
-func (s *InMemoryStorage) GetUser(id string) (*model.User, error) {
+func (s *InMemoryStorage) GetUsersByIDs(ctx context.Context, ids []string) ([]*model.User, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	user, exists := s.Users[id]
-	if !exists {
-		return nil, errors.ErrUserNotFound
+	users := make([]*model.User, len(ids))
+	for i, id := range ids {
+		users[i] = s.Users[id]
 	}
-	return user, nil
+	return users, nil
 }

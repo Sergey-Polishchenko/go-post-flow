@@ -1,6 +1,7 @@
 package inmemory
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -30,14 +31,17 @@ func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Commen
 		Text:      input.Text,
 		Author:    author,
 		Post:      post,
-		CreatedAt: time.Now().Format(time.RFC3339),
 		Children:  []*model.Comment{},
+		CreatedAt: time.Now().Format(time.RFC3339),
 	}
 
 	if input.ParentID != nil {
 		parent, exists := s.Comments[*input.ParentID]
 		if !exists {
 			return nil, errors.ErrParentCommentNotFound
+		}
+		if parent.Post.ID != input.PostID {
+			return nil, errors.ErrParentInOtherPost
 		}
 		parent.Children = append(parent.Children, comment)
 	} else {
@@ -48,57 +52,58 @@ func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Commen
 	return comment, nil
 }
 
-func (s *InMemoryStorage) GetComment(id string) (*model.Comment, error) {
+func (s *InMemoryStorage) GetCommentsByIDs(
+	ctx context.Context,
+	ids []string,
+) ([]*model.Comment, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	comment, exists := s.Comments[id]
-	if !exists {
-		return nil, errors.ErrCommentNotFound
+
+	comments := make([]*model.Comment, len(ids))
+	for i, id := range ids {
+		comments[i] = s.Comments[id]
 	}
-	return comment, nil
+	return comments, nil
 }
 
-func (s *InMemoryStorage) GetChildren(id string) ([]*model.Comment, error) {
+func (s *InMemoryStorage) GetCommentsIDs(postID string) ([]string, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	comment, exists := s.Comments[id]
+
+	post, exists := s.Posts[postID]
+	if !exists {
+		return nil, errors.ErrPostNotFound
+	}
+
+	ids := make([]string, 0)
+	for _, c := range post.Comments {
+		ids = append(ids, c.ID)
+	}
+
+	if len(ids) == 0 {
+		return nil, errors.ErrCommentsNotFound
+	}
+
+	return ids, nil
+}
+
+func (s *InMemoryStorage) GetChildrenIDs(commentID string) ([]string, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	comment, exists := s.Comments[commentID]
 	if !exists {
 		return nil, errors.ErrCommentNotFound
 	}
 
-	if len(comment.Children) == 0 {
+	ids := make([]string, 0)
+	for _, c := range comment.Children {
+		ids = append(ids, c.ID)
+	}
+
+	if len(ids) == 0 {
 		return nil, errors.ErrCommentChildrenNotFound
 	}
 
-	return comment.Children, nil
-}
-
-func (s *InMemoryStorage) RegisterCommentChannel(postID string, ch chan *model.Comment) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.commentChannels[postID] = append(s.commentChannels[postID], ch)
-}
-
-func (s *InMemoryStorage) UnregisterCommentChannel(postID string, ch chan *model.Comment) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	channels := s.commentChannels[postID]
-	for i, c := range channels {
-		if c == ch {
-			s.commentChannels[postID] = append(channels[:i], channels[i+1:]...)
-			return
-		}
-	}
-}
-
-func (s *InMemoryStorage) BroadcastComment(comment *model.Comment) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	channels := s.commentChannels[comment.Post.ID]
-	for _, ch := range channels {
-		select {
-		case ch <- comment:
-		default:
-		}
-	}
+	return ids, nil
 }

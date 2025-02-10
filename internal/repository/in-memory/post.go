@@ -1,6 +1,7 @@
 package inmemory
 
 import (
+	"context"
 	"fmt"
 	"sort"
 
@@ -45,26 +46,13 @@ func (s *InMemoryStorage) GetPosts(limit, offset *int) ([]*model.Post, error) {
 	return posts, nil
 }
 
-func (s *InMemoryStorage) GetPost(id string) (*model.Post, error) {
+func (s *InMemoryStorage) GetPostsByIDs(ctx context.Context, ids []string) ([]*model.Post, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	post, exists := s.Posts[id]
-	if !exists {
-		return nil, errors.ErrPostNotFound
+	posts := make([]*model.Post, len(ids))
+	for i, id := range ids {
+		posts[i] = s.Posts[id]
 	}
-
-	return post, nil
-}
-
-func (s *InMemoryStorage) GetComments(postID string) ([]*model.Comment, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-
-	post, exists := s.Posts[postID]
-	if !exists {
-		return nil, errors.ErrPostNotFound
-	}
-
-	return post.Comments, nil
+	return posts, nil
 }
