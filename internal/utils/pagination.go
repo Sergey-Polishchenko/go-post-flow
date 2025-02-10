@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"errors"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
@@ -29,10 +30,12 @@ func ApplyPagination[T any](data []*T, limit, offset *int) []*T {
 }
 
 func ProcessCommentsWithDepth(
+	ctx context.Context,
 	comments []*model.Comment,
 	maxDepth *int,
 	expand bool,
-	getChildren func(string) ([]*model.Comment, error),
+	getChildrenIDs func(string) ([]string, error),
+	getChildrenByIDs func(context.Context, []string) ([]*model.Comment, error),
 ) ([]*model.Comment, error) {
 	result := make([]*model.Comment, 0, len(comments))
 
@@ -44,7 +47,16 @@ func ProcessCommentsWithDepth(
 	for _, c := range comments {
 		cloned := *c
 		if depth > 0 && expand {
-			children, err := getChildren(c.ID)
+			childrenIDs, err := getChildrenIDs(c.ID)
+			if err != nil {
+				if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) ||
+					errors.Is(err, flowerrors.ErrCommentNotFound) {
+					continue
+				}
+				return nil, err
+			}
+
+			children, err := getChildrenByIDs(ctx, childrenIDs)
 			if err != nil {
 				if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) ||
 					errors.Is(err, flowerrors.ErrCommentNotFound) {
@@ -55,10 +67,12 @@ func ProcessCommentsWithDepth(
 
 			childDepth := depth - 1
 			clonedChildren, err := ProcessCommentsWithDepth(
+				ctx,
 				children,
 				&childDepth,
 				expand,
-				getChildren,
+				getChildrenIDs,
+				getChildrenByIDs,
 			)
 			if err != nil {
 				return nil, err
