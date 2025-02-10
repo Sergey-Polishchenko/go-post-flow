@@ -56,5 +56,3 @@ type EnvLoadingError struct {
 func (e *EnvLoadingError) Error() string {
 	return fmt.Sprintf("failed to load .env file: %s", e.Value)
 }
-
-// fmt.Errorf("failed to load .env file: %v", err)
