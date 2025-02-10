@@ -10,7 +10,7 @@ import (
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/utils"
 )
 
@@ -23,7 +23,7 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*model.Post, error
 func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*model.Post, error) {
 	posts, err := r.storage.GetPosts(limit, offset)
 	if err != nil {
-		if errors.Is(err, reperrors.ErrCommentChildrenNotFound) {
+		if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
 			return []*model.Post{}, nil
 		}
 		return nil, err

@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 func ApplyPagination[T any](data []*T, limit, offset *int) []*T {
@@ -46,8 +46,8 @@ func ProcessCommentsWithDepth(
 		if currentDepth > 0 && expand {
 			children, err := getChildren(c.ID)
 			if err != nil {
-				if errors.Is(err, reperrors.ErrCommentChildrenNotFound) ||
-					errors.Is(err, reperrors.ErrCommentNotFound) {
+				if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) ||
+					errors.Is(err, flowerrors.ErrCommentNotFound) {
 					continue
 				}
 				return nil, err

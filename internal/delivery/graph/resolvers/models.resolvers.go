@@ -10,7 +10,7 @@ import (
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/utils"
 )
 
@@ -18,7 +18,7 @@ import (
 func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limit *int, offset *int, depth *int, expand *bool) ([]*model.Comment, error) {
 	children, err := r.storage.GetChildren(obj.ID)
 	if err != nil {
-		if errors.Is(err, reperrors.ErrCommentChildrenNotFound) {
+		if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
 			return []*model.Comment{}, nil
 		}
 		return nil, err
@@ -42,7 +42,7 @@ func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limi
 func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int, offset *int, depth *int, expand *bool) ([]*model.Comment, error) {
 	comments, err := r.storage.GetComments(obj.ID)
 	if err != nil {
-		if errors.Is(err, reperrors.ErrCommentNotFound) {
+		if errors.Is(err, flowerrors.ErrCommentNotFound) {
 			return []*model.Comment{}, nil
 		}
 		return nil, err

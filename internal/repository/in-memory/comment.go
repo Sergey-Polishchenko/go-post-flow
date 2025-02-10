@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Comment, error) {
@@ -14,15 +14,15 @@ func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Commen
 
 	author, exists := s.Users[input.AuthorID]
 	if !exists {
-		return nil, reperrors.ErrAuthorNotFound
+		return nil, errors.ErrAuthorNotFound
 	}
 
 	post, exists := s.Posts[input.PostID]
 	if !exists {
-		return nil, reperrors.ErrPostNotFound
+		return nil, errors.ErrPostNotFound
 	}
 	if !post.AllowComments {
-		return nil, fmt.Errorf("post not allows comments")
+		return nil, errors.ErrCommentsNotAllowed
 	}
 
 	comment := &model.Comment{
@@ -37,7 +37,7 @@ func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Commen
 	if input.ParentID != nil {
 		parent, exists := s.Comments[*input.ParentID]
 		if !exists {
-			return nil, reperrors.ErrParentCommentNotFound
+			return nil, errors.ErrParentCommentNotFound
 		}
 		parent.Children = append(parent.Children, comment)
 	} else {
@@ -53,11 +53,11 @@ func (s *InMemoryStorage) GetChildren(commentID string) ([]*model.Comment, error
 	defer s.mu.RUnlock()
 	comment, exists := s.Comments[commentID]
 	if !exists {
-		return nil, reperrors.ErrCommentNotFound
+		return nil, errors.ErrCommentNotFound
 	}
 
 	if len(comment.Children) == 0 {
-		return nil, reperrors.ErrCommentChildrenNotFound
+		return nil, errors.ErrCommentChildrenNotFound
 	}
 
 	return comment.Children, nil

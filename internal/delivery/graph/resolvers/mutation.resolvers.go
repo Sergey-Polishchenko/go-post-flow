@@ -9,7 +9,7 @@ import (
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 // CreatePost is the resolver for the createPost field.
@@ -20,7 +20,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.PostInput
 // CreateComment is the resolver for the createComment field.
 func (r *mutationResolver) CreateComment(ctx context.Context, input model.CommentInput) (*model.Comment, error) {
 	if len(input.Text) >= r.comLim {
-		return nil, reperrors.ErrCommentTooLong
+		return nil, errors.ErrCommentTooLong
 	}
 
 	comment, err := r.storage.CreateComment(input)

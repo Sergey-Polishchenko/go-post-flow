@@ -1,10 +1,10 @@
 package inmemory
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 func (s *InMemoryStorage) CreateUser(input model.UserInput) (*model.User, error) {
@@ -25,7 +25,7 @@ func (s *InMemoryStorage) GetUser(id string) (*model.User, error) {
 
 	user, exists := s.Users[id]
 	if !exists {
-		return nil, errors.New("user not found")
+		return nil, errors.ErrUserNotFound
 	}
 	return user, nil
 }

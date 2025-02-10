@@ -21,7 +21,7 @@ func main() {
 
 	env, err := config.GetConfig(flags.InMemory)
 	if err != nil {
-		log.Fatalf("cant load env: %s", err)
+		log.Fatal(err)
 	}
 
 	port := env.Port
@@ -33,7 +33,7 @@ func main() {
 
 	storage, err := repository.LoadStorage(flags.InMemory, connStr)
 	if err != nil {
-		log.Fatal("cant load storage")
+		log.Fatal(err)
 	}
 
 	execSchema := generated.NewExecutableSchema(

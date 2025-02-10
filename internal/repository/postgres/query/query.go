@@ -1,8 +1,9 @@
 package query
 
 import (
-	"fmt"
 	"sync"
+
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 type QueryCache struct {
@@ -26,7 +27,7 @@ func (c *QueryCache) LoadQuery(target, method string) (string, error) {
 
 	query, err := loadQuery(target, method)
 	if err != nil {
-		return "", fmt.Errorf("failed to load query: %w", err)
+		return "", &errors.SQLQueryLoadingError{Value: err}
 	}
 
 	c.mu.Lock()

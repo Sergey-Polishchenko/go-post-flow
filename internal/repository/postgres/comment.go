@@ -2,12 +2,10 @@ package postgres
 
 import (
 	"database/sql"
-	"fmt"
-	"log"
 	"time"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 func (s *PostgresStorage) CreateComment(input model.CommentInput) (*model.Comment, error) {
@@ -15,7 +13,7 @@ func (s *PostgresStorage) CreateComment(input model.CommentInput) (*model.Commen
 	var createdAt time.Time
 	query, err := s.queries.LoadQuery("comment", "create")
 	if err != nil {
-		return nil, fmt.Errorf("on loading query: %s", err)
+		return nil, err
 	}
 	if err := s.db.QueryRow(
 		query,
@@ -24,20 +22,20 @@ func (s *PostgresStorage) CreateComment(input model.CommentInput) (*model.Commen
 		input.PostID,
 		input.ParentID,
 	).Scan(&commentID, &createdAt); err != nil {
-		return nil, fmt.Errorf("failed to create comment: %w", err)
+		return nil, &errors.SQLCreatingError{Value: err}
 	}
 
 	author, err := s.GetUser(input.AuthorID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get author: %w", err)
+		return nil, errors.ErrAuthorNotFound
 	}
 
 	post, err := s.GetPost(input.PostID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get post: %w", err)
+		return nil, errors.ErrPostNotFound
 	}
 	if !post.AllowComments {
-		return nil, fmt.Errorf("post not allows comments")
+		return nil, errors.ErrCommentsNotAllowed
 	}
 
 	comment := &model.Comment{
@@ -55,7 +53,7 @@ func (s *PostgresStorage) CreateComment(input model.CommentInput) (*model.Commen
 func (s *PostgresStorage) GetComment(id string) (*model.Comment, error) {
 	query, err := s.queries.LoadQuery("comment", "get")
 	if err != nil {
-		return nil, fmt.Errorf("on loading query: %s", err)
+		return nil, err
 	}
 	var comment model.Comment
 	var authorID, authorName, postID string
@@ -70,14 +68,14 @@ func (s *PostgresStorage) GetComment(id string) (*model.Comment, error) {
 		&createdAt,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, reperrors.ErrCommentNotFound
+			return nil, errors.ErrCommentNotFound
 		}
-		return nil, fmt.Errorf("failed to get comment: %w", err)
+		return nil, &errors.SQLScaningError{Value: err}
 	}
 
 	post, err := s.GetPost(postID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get post: %w", err)
+		return nil, errors.ErrPostNotFound
 	}
 
 	comment.Author = &model.User{ID: authorID, Name: authorName}
@@ -90,11 +88,11 @@ func (s *PostgresStorage) GetComment(id string) (*model.Comment, error) {
 func (s *PostgresStorage) GetComments(postID string) ([]*model.Comment, error) {
 	query, err := s.queries.LoadQuery("comment", "comments")
 	if err != nil {
-		return nil, fmt.Errorf("on loading query: %s", err)
+		return nil, err
 	}
 	rows, err := s.db.Query(query, postID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get comments: %w", err)
+		return nil, errors.ErrCommentNotFound
 	}
 	defer rows.Close()
 
@@ -105,12 +103,12 @@ func (s *PostgresStorage) GetComments(postID string) ([]*model.Comment, error) {
 		var createdAt time.Time
 		err := rows.Scan(&comment.ID, &comment.Text, &authorID, &authorName, &createdAt, &postID)
 		if err != nil {
-			return nil, fmt.Errorf("failed to scan comment: %w", err)
+			return nil, &errors.SQLScaningError{Value: err}
 		}
 
 		post, err := s.GetPost(postID)
 		if err != nil {
-			return nil, fmt.Errorf("failed to get post: %w", err)
+			return nil, errors.ErrPostNotFound
 		}
 
 		comment.Author = &model.User{ID: authorID, Name: authorName}
@@ -124,11 +122,11 @@ func (s *PostgresStorage) GetComments(postID string) ([]*model.Comment, error) {
 func (s *PostgresStorage) GetChildren(commentID string) ([]*model.Comment, error) {
 	query, err := s.queries.LoadQuery("comment", "children")
 	if err != nil {
-		return nil, fmt.Errorf("on loading query: %s", err)
+		return nil, err
 	}
 	rows, err := s.db.Query(query, commentID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get children: %w", err)
+		return nil, errors.ErrCommentNotFound
 	}
 	defer rows.Close()
 
@@ -139,12 +137,12 @@ func (s *PostgresStorage) GetChildren(commentID string) ([]*model.Comment, error
 		var createdAt time.Time
 		err := rows.Scan(&comment.ID, &comment.Text, &authorID, &authorName, &createdAt, &postID)
 		if err != nil {
-			return nil, fmt.Errorf("failed to scan comment: %w", err)
+			return nil, &errors.SQLScaningError{Value: err}
 		}
 
 		post, err := s.GetPost(postID)
 		if err != nil {
-			return nil, fmt.Errorf("failed to get post: %w", err)
+			return nil, errors.ErrPostNotFound
 		}
 
 		comment.Author = &model.User{ID: authorID, Name: authorName}
@@ -180,7 +178,6 @@ func (s *PostgresStorage) BroadcastComment(comment *model.Comment) {
 		select {
 		case ch <- comment:
 		default:
-			log.Println("Channel is full, skipping broadcast")
 		}
 	}
 }

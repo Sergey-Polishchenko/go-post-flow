@@ -5,7 +5,7 @@ import (
 	"sort"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 func (s *InMemoryStorage) CreatePost(input model.PostInput) (*model.Post, error) {
@@ -14,7 +14,7 @@ func (s *InMemoryStorage) CreatePost(input model.PostInput) (*model.Post, error)
 
 	author, exists := s.Users[input.AuthorID]
 	if !exists {
-		return nil, reperrors.ErrAuthorNotFound
+		return nil, errors.ErrAuthorNotFound
 	}
 
 	post := &model.Post{
@@ -51,7 +51,7 @@ func (s *InMemoryStorage) GetPost(id string) (*model.Post, error) {
 
 	post, exists := s.Posts[id]
 	if !exists {
-		return nil, reperrors.ErrPostNotFound
+		return nil, errors.ErrPostNotFound
 	}
 
 	return post, nil
@@ -63,7 +63,7 @@ func (s *InMemoryStorage) GetComments(postID string) ([]*model.Comment, error) {
 
 	post, exists := s.Posts[postID]
 	if !exists {
-		return nil, reperrors.ErrPostNotFound
+		return nil, errors.ErrPostNotFound
 	}
 
 	return post.Comments, nil

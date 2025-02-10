@@ -6,6 +6,8 @@ import (
 
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
+
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
 type Environment struct {
@@ -30,7 +32,7 @@ var (
 func GetConfig(inmemory bool) (*Environment, error) {
 	once.Do(func() {
 		if err := godotenv.Load(); err != nil {
-			cfgErr = fmt.Errorf("failed to load .env file: %v", err)
+			cfgErr = &errors.EnvLoadingError{Value: err}
 		}
 
 		environment = &Environment{}
@@ -39,7 +41,7 @@ func GetConfig(inmemory bool) (*Environment, error) {
 		}
 
 		if err := env.Parse(environment); err != nil {
-			cfgErr = fmt.Errorf("failed to parse environment variables: %v", err)
+			cfgErr = errors.ErrEnvParsing
 		}
 	})
 	return environment, cfgErr
