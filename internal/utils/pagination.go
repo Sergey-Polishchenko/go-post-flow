@@ -9,21 +9,22 @@ import (
 )
 
 func ApplyPagination[T any](data []*T, limit, offset *int) []*T {
+	lenD := len(data)
 	var start int
 	if offset != nil {
 		start = *offset
 	}
 
-	end := len(data)
-	if limit != nil {
-		end = start + *limit
-		if end > len(data) {
-			end = len(data)
-		}
+	if start > lenD {
+		return []*T{}
 	}
 
-	if start > len(data) {
-		return []*T{}
+	end := lenD
+	if limit != nil {
+		end = start + *limit
+		if end > lenD {
+			end = lenD
+		}
 	}
 
 	return data[start:end]

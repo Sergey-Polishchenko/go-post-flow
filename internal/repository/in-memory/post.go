@@ -7,6 +7,7 @@ import (
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/utils"
 )
 
 func (s *InMemoryStorage) CreatePost(input model.PostInput) (*model.Post, error) {
@@ -43,7 +44,9 @@ func (s *InMemoryStorage) GetPosts(limit, offset *int) ([]*model.Post, error) {
 		return posts[i].ID < posts[j].ID
 	})
 
-	return posts, nil
+	paginated := utils.ApplyPagination(posts, limit, offset)
+
+	return paginated, nil
 }
 
 func (s *InMemoryStorage) GetPostsByIDs(ctx context.Context, ids []string) ([]*model.Post, error) {
