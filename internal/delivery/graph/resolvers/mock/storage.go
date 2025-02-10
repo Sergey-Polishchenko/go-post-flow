@@ -1,8 +1,9 @@
 package mock
 
 import (
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	"github.com/stretchr/testify/mock"
+
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 )
 
 type MockStorage struct {
@@ -24,28 +25,37 @@ func (m *MockStorage) GetUser(id string) (*model.User, error) {
 	return args.Get(0).(*model.User), args.Error(1)
 }
 
-func (m *MockStorage) GetComments(postID string, limit, offset *int) ([]*model.Comment, error) {
-	args := m.Called(postID, limit, offset)
+func (m *MockStorage) GetComments(postID string) ([]*model.Comment, error) {
+	args := m.Called(postID)
 	return args.Get(0).([]*model.Comment), args.Error(1)
 }
 
-func (m *MockStorage) GetChildren(commentID string, limit, offset *int) ([]*model.Comment, error) {
-	args := m.Called(commentID, limit, offset)
+func (m *MockStorage) GetChildren(commentID string) ([]*model.Comment, error) {
+	args := m.Called(commentID)
 	return args.Get(0).([]*model.Comment), args.Error(1)
 }
 
 func (m *MockStorage) CreatePost(input model.PostInput) (*model.Post, error) {
 	args := m.Called(input)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*model.Post), args.Error(1)
 }
 
 func (m *MockStorage) CreateComment(input model.CommentInput) (*model.Comment, error) {
 	args := m.Called(input)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*model.Comment), args.Error(1)
 }
 
 func (m *MockStorage) CreateUser(input model.UserInput) (*model.User, error) {
 	args := m.Called(input)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*model.User), args.Error(1)
 }
 
