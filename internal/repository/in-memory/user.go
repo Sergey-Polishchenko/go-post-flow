@@ -12,7 +12,7 @@ func (s *InMemoryStorage) CreateUser(input model.UserInput) (*model.User, error)
 	defer s.mu.Unlock()
 
 	user := &model.User{
-		ID:   fmt.Sprintf("user_%d", len(s.Users)+1),
+		ID:   fmt.Sprintf("%d", len(s.Users)+1),
 		Name: input.Name,
 	}
 	s.Users[user.ID] = user

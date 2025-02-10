@@ -17,7 +17,7 @@ func (s *InMemoryStorage) CreatePost(input model.PostInput) (*model.Post, error)
 	}
 
 	post := &model.Post{
-		ID:            fmt.Sprintf("post_%d", len(s.Posts)+1),
+		ID:            fmt.Sprintf("%d", len(s.Posts)+1),
 		Title:         input.Title,
 		Content:       input.Content,
 		Author:        author,

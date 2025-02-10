@@ -26,7 +26,7 @@ func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Commen
 	}
 
 	comment := &model.Comment{
-		ID:        fmt.Sprintf("comment_%d", len(s.Comments)+1),
+		ID:        fmt.Sprintf("%d", len(s.Comments)+1),
 		Text:      input.Text,
 		Author:    author,
 		Post:      post,
