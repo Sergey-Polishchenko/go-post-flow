@@ -1,0 +1,13 @@
+query GetComment {
+  comment(id: "1") {
+    id
+    text
+    author {
+      id
+      name
+    }
+    children(depth: 0, expand: true) {
+      # ...
+    }
+  }
+}
