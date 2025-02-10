@@ -13,14 +13,17 @@ import (
 func (s *PostgresStorage) CreateComment(input model.CommentInput) (*model.Comment, error) {
 	var commentID string
 	var createdAt time.Time
-	query := `
-        INSERT INTO comments (text, author_id, post_id, parent_id)
-        VALUES ($1, $2, $3, $4)
-        RETURNING id, created_at
-    `
-	err := s.db.QueryRow(query, input.Text, input.AuthorID, input.PostID, input.ParentID).
-		Scan(&commentID, &createdAt)
+	query, err := s.queries.LoadQuery("comment", "create")
 	if err != nil {
+		return nil, fmt.Errorf("on loading query: %s", err)
+	}
+	if err := s.db.QueryRow(
+		query,
+		input.Text,
+		input.AuthorID,
+		input.PostID,
+		input.ParentID,
+	).Scan(&commentID, &createdAt); err != nil {
 		return nil, fmt.Errorf("failed to create comment: %w", err)
 	}
 
@@ -47,25 +50,22 @@ func (s *PostgresStorage) CreateComment(input model.CommentInput) (*model.Commen
 }
 
 func (s *PostgresStorage) GetComment(id string) (*model.Comment, error) {
-	query := `
-        SELECT c.id, c.text, c.author_id, u.name AS author_name, c.post_id, c.created_at
-        FROM comments c
-        JOIN users u ON c.author_id = u.id
-        WHERE c.id = $1
-    `
+	query, err := s.queries.LoadQuery("comment", "get")
+	if err != nil {
+		return nil, fmt.Errorf("on loading query: %s", err)
+	}
 	var comment model.Comment
 	var authorID, authorName, postID string
 	var createdAt time.Time
 
-	err := s.db.QueryRow(query, id).Scan(
+	if err := s.db.QueryRow(query, id).Scan(
 		&comment.ID,
 		&comment.Text,
 		&authorID,
 		&authorName,
 		&postID,
 		&createdAt,
-	)
-	if err != nil {
+	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, reperrors.ErrCommentNotFound
 		}
@@ -85,12 +85,10 @@ func (s *PostgresStorage) GetComment(id string) (*model.Comment, error) {
 }
 
 func (s *PostgresStorage) GetComments(postID string) ([]*model.Comment, error) {
-	query := `
-        SELECT c.id, c.text, c.author_id, u.name AS author_name, c.created_at, c.post_id
-        FROM comments c
-        JOIN users u ON c.author_id = u.id
-        WHERE c.post_id = $1 AND c.parent_id IS NULL
-    `
+	query, err := s.queries.LoadQuery("comment", "comments")
+	if err != nil {
+		return nil, fmt.Errorf("on loading query: %s", err)
+	}
 	rows, err := s.db.Query(query, postID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get comments: %w", err)
@@ -121,12 +119,10 @@ func (s *PostgresStorage) GetComments(postID string) ([]*model.Comment, error) {
 }
 
 func (s *PostgresStorage) GetChildren(commentID string) ([]*model.Comment, error) {
-	query := `
-        SELECT c.id, c.text, c.author_id, u.name AS author_name, c.created_at, c.post_id
-        FROM comments c
-        JOIN users u ON c.author_id = u.id
-        WHERE c.parent_id = $1
-    `
+	query, err := s.queries.LoadQuery("comment", "children")
+	if err != nil {
+		return nil, fmt.Errorf("on loading query: %s", err)
+	}
 	rows, err := s.db.Query(query, commentID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get children: %w", err)

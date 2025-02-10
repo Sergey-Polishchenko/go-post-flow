@@ -5,11 +5,11 @@ import (
 	"fmt"
 )
 
-//go:embed sql-queries/*.sql
+//go:embed sql-queries/*/*.sql
 var queryFS embed.FS
 
-func loadQuery(name string) (string, error) {
-	data, err := queryFS.ReadFile(fmt.Sprintf("sql-queries/%s.sql", name))
+func loadQuery(target, method string) (string, error) {
+	data, err := queryFS.ReadFile(fmt.Sprintf("sql-queries/%s/%s.sql", target, method))
 	if err != nil {
 		return "", fmt.Errorf("failed to load query: %w", err)
 	}

@@ -10,14 +10,17 @@ import (
 
 func (s *PostgresStorage) CreatePost(input model.PostInput) (*model.Post, error) {
 	var postID string
-	query := `
-        INSERT INTO posts (title, content, author_id, allow_comments)
-        VALUES ($1, $2, $3, $4)
-        RETURNING id
-    `
-	err := s.db.QueryRow(query, input.Title, input.Content, input.AuthorID, input.AllowComments).
-		Scan(&postID)
+	query, err := s.queries.LoadQuery("post", "create")
 	if err != nil {
+		return nil, fmt.Errorf("on loading query: %s", err)
+	}
+	if err := s.db.QueryRow(
+		query,
+		input.Title,
+		input.Content,
+		input.AuthorID,
+		input.AllowComments,
+	).Scan(&postID); err != nil {
 		return nil, fmt.Errorf("failed to create post: %w", err)
 	}
 
@@ -38,14 +41,18 @@ func (s *PostgresStorage) CreatePost(input model.PostInput) (*model.Post, error)
 func (s *PostgresStorage) GetPost(id string) (*model.Post, error) {
 	var post model.Post
 	var authorID string
-	query := `
-        SELECT id, title, content, author_id, allow_comments
-        FROM posts
-        WHERE id = $1
-    `
-	err := s.db.QueryRow(query, id).
-		Scan(&post.ID, &post.Title, &post.Content, &authorID, &post.AllowComments)
+	query, err := s.queries.LoadQuery("post", "get")
 	if err != nil {
+		return nil, fmt.Errorf("on loading query: %s", err)
+	}
+	if err := s.db.QueryRow(query, id).
+		Scan(
+			&post.ID,
+			&post.Title,
+			&post.Content,
+			&authorID,
+			&post.AllowComments,
+		); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, reperrors.ErrPostNotFound
 		}
@@ -62,12 +69,10 @@ func (s *PostgresStorage) GetPost(id string) (*model.Post, error) {
 }
 
 func (s *PostgresStorage) GetPosts(limit, offset *int) ([]*model.Post, error) {
-	query := `
-		SELECT id, title, content, author_id, allow_comments
-		FROM posts
-		ORDER BY id
-		LIMIT $1 OFFSET $2
-	`
+	query, err := s.queries.LoadQuery("post", "posts")
+	if err != nil {
+		return nil, fmt.Errorf("on loading query: %s", err)
+	}
 	rows, err := s.db.Query(query, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get posts: %w", err)
