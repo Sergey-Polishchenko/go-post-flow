@@ -12,8 +12,6 @@ import (
 	reperrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 )
 
-const comLim = 2000
-
 // CreatePost is the resolver for the createPost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.PostInput) (*model.Post, error) {
 	return r.storage.CreatePost(input)
@@ -21,7 +19,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.PostInput
 
 // CreateComment is the resolver for the createComment field.
 func (r *mutationResolver) CreateComment(ctx context.Context, input model.CommentInput) (*model.Comment, error) {
-	if len(input.Text) >= comLim {
+	if len(input.Text) >= r.comLim {
 		return nil, reperrors.ErrCommentTooLong
 	}
 
