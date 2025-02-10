@@ -5,10 +5,10 @@ type Post {
   author: User!
   allowComments: Boolean!
   comments(
-  limit: Int
-  offset: Int
-  depth: Int = 1
-  expand: Boolean = false
+    limit: Int
+    offset: Int
+    depth: Int = 1
+    expand: Boolean = false
   ): [Comment!]!
 }
 
