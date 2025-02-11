@@ -28,11 +28,13 @@ func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limi
 	}
 
 	children, errs := loader.LoadAll(ctx, childrenIDs)
-	if errs[0] != nil {
-		if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
-			return []*model.Comment{}, nil
+	for _, err := range errs {
+		if err != nil {
+			if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
+				return []*model.Comment{}, nil
+			}
+			return nil, err
 		}
-		return nil, err
 	}
 
 	paginated := utils.ApplyPagination(children, limit, offset)
@@ -64,11 +66,13 @@ func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int
 	}
 
 	comments, errs := loader.LoadAll(ctx, commentsIDs)
-	if errs[0] != nil {
-		if errors.Is(err, flowerrors.ErrCommentNotFound) {
-			return []*model.Comment{}, nil
+	for _, err := range errs {
+		if err != nil {
+			if errors.Is(err, flowerrors.ErrCommentNotFound) {
+				return []*model.Comment{}, nil
+			}
+			return nil, err
 		}
-		return nil, err
 	}
 
 	paginated := utils.ApplyPagination(comments, limit, offset)
