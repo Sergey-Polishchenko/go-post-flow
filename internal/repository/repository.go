@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
 	inmemory "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/in-memory"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/repository/postgres"
 )
 
 type Storage interface {
@@ -30,6 +30,5 @@ func LoadStorage(isInmemory bool, connStr string) (Storage, error) {
 	if isInmemory {
 		return inmemory.NewStorage(), nil
 	}
-	// return postgres.NewStorage(connStr)
-	return nil, errors.ErrPingDatabase
+	return postgres.NewStorage(connStr)
 }
