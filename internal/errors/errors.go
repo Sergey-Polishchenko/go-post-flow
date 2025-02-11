@@ -47,6 +47,22 @@ func (e *SQLScaningError) Error() string {
 	return fmt.Sprintf("sql row not scaned: %s", e.Value)
 }
 
+type SQLIterationError struct {
+	Value error
+}
+
+func (e *SQLIterationError) Error() string {
+	return fmt.Sprintf("sql iteration problem: %s", e.Value)
+}
+
+type SQLQueryError struct {
+	Value error
+}
+
+func (e *SQLQueryError) Error() string {
+	return fmt.Sprintf("sql query problem: %s", e.Value)
+}
+
 type DatabaseConnectingError struct {
 	Value error
 }
