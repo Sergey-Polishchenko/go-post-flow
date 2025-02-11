@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/broadcast"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	inmemory "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/in-memory"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/repository/postgres"
@@ -21,9 +22,7 @@ type Storage interface {
 	CreateUser(input model.UserInput) (*model.User, error)
 	GetUsersByIDs(ctx context.Context, ids []string) ([]*model.User, error)
 
-	BroadcastComment(comment *model.Comment)
-	RegisterCommentChannel(postID string, ch chan *model.Comment)
-	UnregisterCommentChannel(postID string, ch chan *model.Comment)
+	broadcast.Broadcaster
 }
 
 func LoadStorage(isInmemory bool, connStr string) (Storage, error) {

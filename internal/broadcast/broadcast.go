@@ -6,6 +6,12 @@ import (
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 )
 
+type Broadcaster interface {
+	BroadcastComment(comment *model.Comment)
+	RegisterCommentChannel(postID string, ch chan *model.Comment)
+	UnregisterCommentChannel(postID string, ch chan *model.Comment)
+}
+
 type Broadcast struct {
 	mu              sync.RWMutex
 	CommentChannels map[string][]chan *model.Comment
