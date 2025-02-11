@@ -16,7 +16,7 @@ import (
 )
 
 // Children is the resolver for the children field.
-func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limit *int, offset *int, depth *int, expand *bool) ([]*model.Comment, error) {
+func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limit *int, offset *int) ([]*model.Comment, error) {
 	childrenIDs, err := r.storage.GetChildrenIDs(obj.ID)
 	if err != nil && !errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
 		return nil, err
@@ -39,22 +39,11 @@ func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limi
 
 	paginated := utils.ApplyPagination(children, limit, offset)
 
-	if expand != nil && *expand {
-		return utils.ProcessCommentsWithDepth(
-			ctx,
-			paginated,
-			depth,
-			*expand,
-			r.storage.GetChildrenIDs,
-			r.storage.GetCommentsByIDs,
-		)
-	}
-
 	return paginated, nil
 }
 
 // Comments is the resolver for the comments field.
-func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int, offset *int, depth *int, expand *bool) ([]*model.Comment, error) {
+func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int, offset *int) ([]*model.Comment, error) {
 	commentsIDs, err := r.storage.GetCommentsIDs(obj.ID)
 	if err != nil && !errors.Is(err, flowerrors.ErrCommentsNotFound) {
 		return nil, err
@@ -76,17 +65,6 @@ func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int
 	}
 
 	paginated := utils.ApplyPagination(comments, limit, offset)
-
-	if expand != nil && *expand {
-		return utils.ProcessCommentsWithDepth(
-			ctx,
-			paginated,
-			depth,
-			*expand,
-			r.storage.GetChildrenIDs,
-			r.storage.GetCommentsByIDs,
-		)
-	}
 
 	return paginated, nil
 }

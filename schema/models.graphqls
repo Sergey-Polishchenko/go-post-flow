@@ -7,8 +7,6 @@ type Post {
   comments(
     limit: Int
     offset: Int
-    depth: Int = 1
-    expand: Boolean = false
   ): [Comment!]!
 }
 
@@ -20,8 +18,6 @@ type Comment {
   children(
     limit: Int
     offset: Int
-    depth: Int = 1
-    expand: Boolean = false
   ): [Comment!]!
   createdAt: String!
 }
