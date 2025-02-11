@@ -41,7 +41,7 @@ func (s *InMemoryStorage) GetPosts(limit, offset *int) ([]*model.Post, error) {
 	}
 
 	sort.Slice(posts, func(i, j int) bool {
-		return posts[i].ID < posts[j].ID
+		return posts[i].ID > posts[j].ID
 	})
 
 	paginated := utils.ApplyPagination(posts, limit, offset)
