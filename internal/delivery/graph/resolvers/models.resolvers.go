@@ -18,7 +18,7 @@ import (
 // Children is the resolver for the children field.
 func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limit *int, offset *int, depth *int, expand *bool) ([]*model.Comment, error) {
 	childrenIDs, err := r.storage.GetChildrenIDs(obj.ID)
-	if err != nil {
+	if err != nil && !errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
 		return nil, err
 	}
 
@@ -56,7 +56,7 @@ func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limi
 // Comments is the resolver for the comments field.
 func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int, offset *int, depth *int, expand *bool) ([]*model.Comment, error) {
 	commentsIDs, err := r.storage.GetCommentsIDs(obj.ID)
-	if err != nil {
+	if err != nil && !errors.Is(err, flowerrors.ErrCommentsNotFound) {
 		return nil, err
 	}
 
@@ -68,7 +68,7 @@ func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int
 	comments, errs := loader.LoadAll(ctx, commentsIDs)
 	for _, err := range errs {
 		if err != nil {
-			if errors.Is(err, flowerrors.ErrCommentNotFound) {
+			if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
 				return []*model.Comment{}, nil
 			}
 			return nil, err
