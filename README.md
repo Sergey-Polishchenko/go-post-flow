@@ -135,6 +135,7 @@ docker-compose down
 - commentAdded(postId: ID!) => Comment!
 
 Примеры запросов GraphQL находятся в [директории с примерными запросами](./graphql-test-queries/)
+
 Так же можно посмотреть [схему](./schema/)
 
 ### Примеры запросов через curl
