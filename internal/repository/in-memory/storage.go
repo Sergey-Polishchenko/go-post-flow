@@ -3,8 +3,8 @@ package inmemory
 import (
 	"sync"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/broadcast"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/pkg/broadcast"
 )
 
 type InMemoryStorage struct {
