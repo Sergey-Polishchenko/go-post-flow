@@ -7,7 +7,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/pkg/broadcast"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/repository/postgres/query"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/storage/postgres/query"
 	"github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 

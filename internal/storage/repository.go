@@ -1,11 +1,11 @@
-package repository
+package storage
 
 import (
 	"context"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/pkg/broadcast"
-	inmemory "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/in-memory"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/repository/postgres"
+	inmemory "github.com/Sergey-Polishchenko/go-post-flow/internal/storage/in-memory"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/storage/postgres"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
 )
 

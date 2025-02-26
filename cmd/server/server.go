@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/config"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/repository"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/storage"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/dataloaders"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/resolvers"
@@ -30,7 +30,7 @@ func main() {
 		connStr = env.DB.ConnStr()
 	}
 
-	storage, err := repository.LoadStorage(flags.InMemory, connStr)
+	storage, err := storage.LoadStorage(flags.InMemory, connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
