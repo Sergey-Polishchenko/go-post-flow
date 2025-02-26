@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 func (s *InMemoryStorage) CreateComment(input model.CommentInput) (*model.Comment, error) {

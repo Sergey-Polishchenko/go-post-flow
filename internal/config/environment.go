@@ -7,7 +7,7 @@ import (
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 type Environment struct {

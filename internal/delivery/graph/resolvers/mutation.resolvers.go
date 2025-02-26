@@ -9,7 +9,7 @@ import (
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 // CreatePost is the resolver for the createPost field.

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
 

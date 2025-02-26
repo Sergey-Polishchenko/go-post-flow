@@ -11,7 +11,7 @@ import (
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/dataloaders"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/utils"
 )
 
@@ -75,7 +75,5 @@ func (r *Resolver) Comment() generated.CommentResolver { return &commentResolver
 // Post returns generated.PostResolver implementation.
 func (r *Resolver) Post() generated.PostResolver { return &postResolver{r} }
 
-type (
-	commentResolver struct{ *Resolver }
-	postResolver    struct{ *Resolver }
-)
+type commentResolver struct{ *Resolver }
+type postResolver struct{ *Resolver }

@@ -23,6 +23,7 @@ var (
 	ErrUserLoaderNotFound    = fmt.Errorf("user loader not found")
 )
 
+// SQLQuery error
 type SQLQueryLoadingError struct {
 	Value error
 }

@@ -3,7 +3,7 @@ package query
 import (
 	"sync"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	"github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 type QueryCache struct {

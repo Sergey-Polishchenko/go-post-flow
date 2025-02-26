@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 type CommentLoader struct {

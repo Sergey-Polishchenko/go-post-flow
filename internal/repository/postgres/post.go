@@ -6,7 +6,7 @@ import (
 	"github.com/lib/pq"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	errors "github.com/Sergey-Polishchenko/go-post-flow/internal/errors"
+	errors "github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 func (s *PostgresStorage) CreatePost(input model.PostInput) (*model.Post, error) {

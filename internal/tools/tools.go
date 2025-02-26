@@ -8,5 +8,3 @@ import (
 	_ "golang.org/x/tools/go/packages"
 	_ "golang.org/x/tools/imports"
 )
-
-// Tools for code generation
