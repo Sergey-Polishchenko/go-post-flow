@@ -7,9 +7,9 @@ package resolvers
 import (
 	"context"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/dataloaders"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/dataloaders"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/generated"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
 	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
 )
 
 func (s *InMemoryStorage) CreateUser(input model.UserInput) (*model.User, error) {

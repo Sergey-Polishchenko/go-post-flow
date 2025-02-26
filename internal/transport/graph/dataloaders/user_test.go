@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
 )
 
 func TestUserLoader(t *testing.T) {

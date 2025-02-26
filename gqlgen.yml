@@ -3,15 +3,15 @@ schema:
 
 exec:
   package: generated
-  filename: internal/delivery/graph/generated/generated.go
+  filename: internal/transport/graph/generated/generated.go
 
 model:
-  filename: internal/delivery/graph/model/models_gen.go
+  filename: internal/transport/graph/model/models_gen.go
   package: model
 
 resolver:
   layout: follow-schema
-  dir: internal/delivery/graph/resolvers
+  dir: internal/transport/graph/resolvers
   package: resolvers
   filename_template: "{name}.resolvers.go"
 

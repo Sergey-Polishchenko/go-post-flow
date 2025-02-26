@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
 )
 
 func TestNewBroadcast(t *testing.T) {

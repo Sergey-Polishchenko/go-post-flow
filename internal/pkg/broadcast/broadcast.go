@@ -3,7 +3,7 @@ package broadcast
 import (
 	"sync"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
 )
 
 type Broadcaster interface {

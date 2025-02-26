@@ -3,9 +3,10 @@ package inmemory
 import (
 	"testing"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
-	"github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
+	"github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 func TestCreatePost(t *testing.T) {

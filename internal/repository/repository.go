@@ -3,10 +3,10 @@ package repository
 import (
 	"context"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/pkg/broadcast"
 	inmemory "github.com/Sergey-Polishchenko/go-post-flow/internal/repository/in-memory"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/repository/postgres"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
 )
 
 type Storage interface {

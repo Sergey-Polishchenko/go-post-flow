@@ -3,7 +3,7 @@ package inmemory
 import (
 	"sync"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/pkg/broadcast"
 )
 

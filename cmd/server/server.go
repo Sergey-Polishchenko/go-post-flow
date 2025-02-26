@@ -11,10 +11,10 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/config"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/dataloaders"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/generated"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/resolvers"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/repository"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/dataloaders"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/generated"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/resolvers"
 )
 
 func main() {

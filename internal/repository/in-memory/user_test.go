@@ -4,8 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/delivery/graph/model"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
 )
 
 func TestCreateUser(t *testing.T) {
