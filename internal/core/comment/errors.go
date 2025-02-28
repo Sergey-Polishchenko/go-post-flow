@@ -20,6 +20,7 @@ func (err *InvalidCommentTextError) Unwrap() error {
 }
 
 var (
+	ErrNilId              = errors.New("nil id")
 	ErrNilAuthor          = errors.New("nil author")
 	ErrInvalidCommentText = errors.New("invalid comment text")
 )

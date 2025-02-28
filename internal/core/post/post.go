@@ -5,13 +5,18 @@ import "github.com/Sergey-Polishchenko/go-post-flow/internal/core/user"
 
 // Post represents a post in the system.
 type Post struct {
+	id      string
 	title   PostTitle
 	content PostContent
 	Author  *user.User
 }
 
 // New creates a validated Post instance.
-func New(author *user.User, title PostTitle, content PostContent) (*Post, error) {
+func New(id string, author *user.User, title PostTitle, content PostContent) (*Post, error) {
+	if id == "" {
+		return nil, ErrNilId
+	}
+
 	if author == nil {
 		return nil, ErrNilAuthor
 	}
@@ -25,10 +30,16 @@ func New(author *user.User, title PostTitle, content PostContent) (*Post, error)
 	}
 
 	return &Post{
+		id:      id,
 		title:   title,
 		content: content,
 		Author:  author,
 	}, nil
+}
+
+// Id returns the post's id (read-only).
+func (post *Post) Id() string {
+	return post.id
 }
 
 // Title returns the post's title (read-only).

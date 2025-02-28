@@ -34,6 +34,7 @@ func (err *InvalidPostContentError) Unwrap() error {
 }
 
 var (
+	ErrNilId              = errors.New("nil id")
 	ErrNilAuthor          = errors.New("nil author")
 	ErrInvalidPostTitle   = errors.New("invalid post title")
 	ErrInvalidPostContent = errors.New("invalid post content")

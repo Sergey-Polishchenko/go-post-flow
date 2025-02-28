@@ -3,16 +3,26 @@ package user
 
 // User represents system user account.
 type User struct {
+	id   string
 	name UserName
 }
 
 // New creates validated User instance.
-func New(name UserName) (*User, error) {
+func New(id string, name UserName) (*User, error) {
+	if id == "" {
+		return nil, ErrNilId
+	}
+
 	if err := name.IsValid(); err != nil {
 		return nil, &InvalidUsernameError{err}
 	}
 
-	return &User{name: name}, nil
+	return &User{id: id, name: name}, nil
+}
+
+// Id returns the user's id(Read-only).
+func (user *User) Id() string {
+	return user.id
 }
 
 // Name returns the user's name(Read-only).

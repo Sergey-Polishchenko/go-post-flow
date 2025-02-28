@@ -19,4 +19,7 @@ func (err *InvalidUsernameError) Unwrap() error {
 	return err.detail
 }
 
-var ErrInvalidUsername = errors.New("invalid username")
+var (
+	ErrNilId           = errors.New("nil id")
+	ErrInvalidUsername = errors.New("invalid username")
+)
