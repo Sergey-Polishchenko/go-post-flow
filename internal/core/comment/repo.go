@@ -1,8 +1,10 @@
 package comment
 
+import "context"
+
 // CommentRepository defines persistence operations for Comments.
 type CommentRepository interface {
-	Create(comment *Comment) error
-	Remove(id string) error
-	GetById(id string) (*Comment, error)
+	Create(ctx context.Context, comment *Comment) error
+	Remove(ctx context.Context, id string) error
+	GetById(ctx context.Context, id string) (*Comment, error)
 }
