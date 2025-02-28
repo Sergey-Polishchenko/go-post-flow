@@ -1,10 +1,6 @@
 package user
 
-// UserRepository provides persistence for users.
-//
-// Implementations must guarantee:
-//   - Idempotency of the Create method.
-//   - Thread safety.
+// UserRepository defines persistence operations for Users.
 type UserRepository interface {
 	Create(user *User) error
 	Remove(id string) error
