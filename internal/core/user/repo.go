@@ -6,5 +6,5 @@ import "context"
 type UserRepository interface {
 	Create(ctx context.Context, name string) (*User, error)
 	Remove(ctx context.Context, id string) error
-	GetById(ctx context.Context, id string) (*User, error)
+	GetByID(ctx context.Context, id string) (*User, error)
 }
