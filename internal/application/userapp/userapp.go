@@ -1,11 +1,22 @@
 package userapp
 
-import "github.com/Sergey-Polishchenko/go-post-flow/internal/core/user"
+import (
+	"context"
 
-type UserApp struct {
-	repo user.UserRepository
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/core/user"
+)
+
+// UserRepository defines persistence operations for Users.
+type UserRepository interface {
+	Create(ctx context.Context, name string) (*user.User, error)
+	Remove(ctx context.Context, id string) error
+	GetByID(ctx context.Context, id string) (*user.User, error)
 }
 
-func New(repo user.UserRepository) *UserApp {
+type UserApp struct {
+	repo UserRepository
+}
+
+func New(repo UserRepository) *UserApp {
 	return &UserApp{repo: repo}
 }
