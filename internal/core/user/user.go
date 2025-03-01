@@ -20,8 +20,8 @@ func New(id string, name UserName) (*User, error) {
 	return &User{id: id, name: name}, nil
 }
 
-// Id returns the user's id(Read-only).
-func (user *User) Id() string {
+// ID returns the user's id(Read-only).
+func (user *User) ID() string {
 	return user.id
 }
 

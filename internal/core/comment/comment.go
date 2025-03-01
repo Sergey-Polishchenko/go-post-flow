@@ -26,8 +26,8 @@ func New(id string, author *user.User, text CommentText) (*Comment, error) {
 	return &Comment{id: id, Author: author, text: text}, nil
 }
 
-// Id returns the comment's id (read-only).
-func (c *Comment) Id() string {
+// ID returns the comment's id (read-only).
+func (c *Comment) ID() string {
 	return c.id
 }
 

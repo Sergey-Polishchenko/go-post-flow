@@ -37,8 +37,8 @@ func New(id string, author *user.User, title PostTitle, content PostContent) (*P
 	}, nil
 }
 
-// Id returns the post's id (read-only).
-func (post *Post) Id() string {
+// ID returns the post's id (read-only).
+func (post *Post) ID() string {
 	return post.id
 }
 
