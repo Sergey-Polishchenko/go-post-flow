@@ -12,7 +12,7 @@ func (app *UserApp) GetUser(ctx context.Context, id string) (*user.User, error) 
 		return nil, ErrInvalidInput
 	}
 
-	user, err := app.repo.GetById(ctx, id)
+	user, err := app.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}

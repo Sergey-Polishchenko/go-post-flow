@@ -9,15 +9,15 @@ import (
 
 func (app *CommentApp) CreateComment(
 	ctx context.Context,
-	authorId string,
+	authorID string,
 	text string,
 ) (*comment.Comment, error) {
-	comment, err := app.repo.Create(ctx, authorId, text)
+	comment, err := app.repo.Create(ctx, authorID, text)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Printf("Comment(id: %s) created", comment.Id())
+	log.Printf("Comment(id: %s) created", comment.ID())
 
 	return comment, nil
 }

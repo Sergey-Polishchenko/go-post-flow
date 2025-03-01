@@ -12,7 +12,7 @@ func (app *CommentApp) GetComment(ctx context.Context, id string) (*comment.Comm
 		return nil, ErrInvalidInput
 	}
 
-	comment, err := app.repo.GetById(ctx, id)
+	comment, err := app.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}

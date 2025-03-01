@@ -13,7 +13,7 @@ func (app *UserApp) CreateUser(ctx context.Context, name string) (*user.User, er
 		return nil, err
 	}
 
-	log.Printf("User(id: %s) created", user.Id())
+	log.Printf("User(id: %s) created", user.ID())
 
 	return user, nil
 }

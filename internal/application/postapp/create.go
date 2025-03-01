@@ -9,16 +9,16 @@ import (
 
 func (app *PostApp) CreatePost(
 	ctx context.Context,
-	authorId string,
+	authorID string,
 	title string,
 	content string,
 ) (*post.Post, error) {
-	post, err := app.repo.Create(ctx, authorId, title, content)
+	post, err := app.repo.Create(ctx, authorID, title, content)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Printf("Post(id: %s) created", post.Id())
+	log.Printf("Post(id: %s) created", post.ID())
 
 	return post, nil
 }

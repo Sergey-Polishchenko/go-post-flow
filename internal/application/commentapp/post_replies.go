@@ -9,18 +9,18 @@ import (
 
 func (app *CommentApp) GetPostReplies(
 	ctx context.Context,
-	postId string,
+	postID string,
 ) ([]*comment.Comment, error) {
-	if postId == "" {
+	if postID == "" {
 		return nil, ErrInvalidInput
 	}
 
-	comment, err := app.repo.GetReplies(ctx, postId)
+	comment, err := app.repo.GetReplies(ctx, postID)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Printf("Replies of Post(id: %s) getted", postId)
+	log.Printf("Replies of Post(id: %s) getted", postID)
 
 	return comment, nil
 }

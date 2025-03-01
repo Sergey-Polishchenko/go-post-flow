@@ -12,7 +12,7 @@ func (app *PostApp) GetPost(ctx context.Context, id string) (*post.Post, error) 
 		return nil, ErrInvalidInput
 	}
 
-	post, err := app.repo.GetById(ctx, id)
+	post, err := app.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
