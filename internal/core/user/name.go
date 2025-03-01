@@ -12,6 +12,11 @@ const (
 // UserName represents a user's name.
 type UserName string
 
+// String return UserName string representation.
+func (name UserName) String() string {
+	return string(name)
+}
+
 // IsValid checks the validity of the name.
 func (name UserName) IsValid() error {
 	return validation.NewLengthValidator(MinUserNameLength, MaxUserNameLength).
