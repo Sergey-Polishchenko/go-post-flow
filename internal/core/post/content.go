@@ -10,6 +10,10 @@ const (
 // PostContent represents a post's content.
 type PostContent string
 
+func (content PostContent) String() string {
+	return string(content)
+}
+
 // IsValid checks the validity of the content.
 func (content PostContent) IsValid() error {
 	return validation.NewLengthValidator(MinPostContentLength, MaxPostContentLength).
