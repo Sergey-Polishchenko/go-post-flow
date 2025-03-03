@@ -9,6 +9,8 @@ const (
 	MaxUserNameLength = 100
 )
 
+var usernameValidator = validation.NewLengthValidator(MinUserNameLength, MaxUserNameLength)
+
 // UserName represents a user's name.
 type UserName string
 
@@ -19,6 +21,5 @@ func (name UserName) String() string {
 
 // IsValid checks the validity of the name.
 func (name UserName) IsValid() error {
-	return validation.NewLengthValidator(MinUserNameLength, MaxUserNameLength).
-		Validate(string(name))
+	return usernameValidator.Validate(string(name))
 }
