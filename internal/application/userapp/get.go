@@ -2,22 +2,28 @@ package userapp
 
 import (
 	"context"
-	"log"
-
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/core/user"
 )
 
-func (app *UserApp) GetUser(ctx context.Context, id string) (*user.User, error) {
-	if id == "" {
-		return nil, ErrInvalidInput
-	}
-
-	user, err := app.repo.GetByID(ctx, id)
+func (app *UserApp) GetUser(ctx context.Context, id string) (UserDTO, error) {
+	userDTO, err := app.repo.GetByID(ctx, id)
 	if err != nil {
-		return nil, err
+		app.logger.Error("Failed to load user from repo", "error", err)
+		return UserDTO{}, err
 	}
 
-	log.Printf("User(id: %s) getted", id)
+	// TODO: business logic for User entity.
+	//
+	// user, err := user.User{
+	//	 ID: user.UserID(userDTO.ID),
+	//	 Name: user.UserName(userDTO.Name)),
+	// }
+	// if err != nil {
+	// 	return UserDTO{}, err
+	// }
+	//
+	// Any business logic for user...
 
-	return user, nil
+	app.logger.Info("User got", "id", userDTO.ID)
+
+	return userDTO, nil
 }

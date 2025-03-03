@@ -2,18 +2,28 @@ package userapp
 
 import (
 	"context"
-	"log"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/core/user"
 )
 
-func (app *UserApp) CreateUser(ctx context.Context, name string) (*user.User, error) {
-	user, err := app.repo.Create(ctx, name)
+func (app *UserApp) CreateUser(ctx context.Context, createUserDTO CreateUserDTO) (UserDTO, error) {
+	user, err := user.New(user.UserName(createUserDTO.Name))
 	if err != nil {
-		return nil, err
+		app.logger.Error("Failed to validate user", "error", err)
+		return UserDTO{}, err
 	}
 
-	log.Printf("User(id: %s) created", user.ID())
+	userDTO := UserDTO{
+		ID:   user.ID.String(),
+		Name: user.Name().String(),
+	}
 
-	return user, nil
+	if err = app.repo.Save(ctx, userDTO); err != nil {
+		app.logger.Error("Failed to save user in repo", "error", err)
+		return UserDTO{}, err
+	}
+
+	app.logger.Info("User created", "id", user.ID.String())
+
+	return userDTO, nil
 }

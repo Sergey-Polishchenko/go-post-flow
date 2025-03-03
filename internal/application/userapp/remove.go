@@ -2,20 +2,16 @@ package userapp
 
 import (
 	"context"
-	"log"
 )
 
 func (app *UserApp) RemoveUser(ctx context.Context, id string) error {
-	if id == "" {
-		return ErrInvalidInput
-	}
-
 	err := app.repo.Remove(ctx, id)
 	if err != nil {
+		app.logger.Error("Failed to remove user from repo", "error", err)
 		return err
 	}
 
-	log.Printf("User(id: %s) removed", id)
+	app.logger.Info("User got", "id", id)
 
 	return nil
 }
