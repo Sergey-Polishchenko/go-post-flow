@@ -3,20 +3,20 @@ package post
 
 import "github.com/Sergey-Polishchenko/go-post-flow/internal/core/user"
 
+type Identifier interface {
+	String() string
+}
+
 // Post represents a post in the system.
 type Post struct {
-	id      string
+	ID      Identifier
 	title   PostTitle
 	content PostContent
 	Author  *user.User
 }
 
 // New creates a validated Post instance.
-func New(id string, author *user.User, title PostTitle, content PostContent) (*Post, error) {
-	if id == "" {
-		return nil, ErrNilId
-	}
-
+func New(id Identifier, author *user.User, title PostTitle, content PostContent) (*Post, error) {
 	if author == nil {
 		return nil, ErrNilAuthor
 	}
@@ -30,16 +30,11 @@ func New(id string, author *user.User, title PostTitle, content PostContent) (*P
 	}
 
 	return &Post{
-		id:      id,
+		ID:      id,
 		title:   title,
 		content: content,
 		Author:  author,
 	}, nil
-}
-
-// ID returns the post's id (read-only).
-func (post *Post) ID() string {
-	return post.id
 }
 
 // Title returns the post's title (read-only).
