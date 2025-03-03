@@ -4,14 +4,15 @@ import (
 	"context"
 
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/core/id"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/core/user"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/pkg/logging"
 )
 
 // UserRepository defines persistence operations for Users.
 type UserRepository interface {
-	Save(ctx context.Context, user UserDTO) error
+	Save(ctx context.Context, user *user.User) error
 	Remove(ctx context.Context, id id.Identifier) error
-	GetByID(ctx context.Context, id id.Identifier) (UserDTO, error)
+	GetByID(ctx context.Context, id id.Identifier) (*user.User, error)
 }
 
 type UserApp struct {

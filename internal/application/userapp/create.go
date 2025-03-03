@@ -15,17 +15,15 @@ func (app *UserApp) CreateUser(ctx context.Context, createUserDTO CreateUserDTO)
 		return UserDTO{}, err
 	}
 
-	userDTO := UserDTO{
-		ID:   user.ID.String(),
-		Name: user.Name().String(),
-	}
-
-	if err = app.repo.Save(ctx, userDTO); err != nil {
+	if err = app.repo.Save(ctx, user); err != nil {
 		app.logger.Error("Failed to save user in repo", "error", err)
 		return UserDTO{}, err
 	}
 
 	app.logger.Info("User created", "id", user.ID.String())
 
-	return userDTO, nil
+	return UserDTO{
+		ID:   user.ID.String(),
+		Name: user.Name().String(),
+	}, nil
 }
