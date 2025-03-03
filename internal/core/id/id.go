@@ -3,7 +3,7 @@ package id
 import "github.com/google/uuid"
 
 type Identifier interface {
-	String()
+	String() string
 }
 
 type ID string
