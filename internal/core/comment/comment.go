@@ -2,19 +2,19 @@ package comment
 
 import "github.com/Sergey-Polishchenko/go-post-flow/internal/core/user"
 
+type Identifier interface {
+	String() string
+}
+
 // Comment represents a comment in the system.
 type Comment struct {
-	id     string
+	ID     Identifier
 	Author *user.User
 	text   CommentText
 }
 
 // New creates a validated Comment instance.
-func New(id string, author *user.User, text CommentText) (*Comment, error) {
-	if id == "" {
-		return nil, ErrNilId
-	}
-
+func New(id Identifier, author *user.User, text CommentText) (*Comment, error) {
 	if author == nil {
 		return nil, ErrNilAuthor
 	}
@@ -23,12 +23,7 @@ func New(id string, author *user.User, text CommentText) (*Comment, error) {
 		return nil, &InvalidCommentTextError{err}
 	}
 
-	return &Comment{id: id, Author: author, text: text}, nil
-}
-
-// ID returns the comment's id (read-only).
-func (c *Comment) ID() string {
-	return c.id
+	return &Comment{ID: id, Author: author, text: text}, nil
 }
 
 // Text returns the comment's text (read-only).
