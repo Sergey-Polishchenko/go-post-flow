@@ -2,6 +2,10 @@ package id
 
 import "github.com/google/uuid"
 
+type Identifier interface {
+	String()
+}
+
 type ID string
 
 func New() ID {

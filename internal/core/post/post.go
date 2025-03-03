@@ -1,22 +1,21 @@
 // Package post implements core post domain models and operations.
 package post
 
-import "github.com/Sergey-Polishchenko/go-post-flow/internal/core/user"
-
-type Identifier interface {
-	String() string
-}
+import (
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/core/id"
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/core/user"
+)
 
 // Post represents a post in the system.
 type Post struct {
-	ID      Identifier
+	ID      id.Identifier
 	title   PostTitle
 	content PostContent
 	Author  *user.User
 }
 
 // New creates a validated Post instance.
-func New(id Identifier, author *user.User, title PostTitle, content PostContent) (*Post, error) {
+func New(id id.Identifier, author *user.User, title PostTitle, content PostContent) (*Post, error) {
 	if author == nil {
 		return nil, ErrNilAuthor
 	}
