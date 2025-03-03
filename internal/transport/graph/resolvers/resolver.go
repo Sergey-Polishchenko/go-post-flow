@@ -1,15 +1,16 @@
 package resolvers
 
-import "github.com/Sergey-Polishchenko/go-post-flow/internal/storage"
+import (
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/application/userapp"
+)
 
 type Resolver struct {
-	storage storage.Storage
+	userApp *userapp.UserApp
 	comLim  int
 }
 
-func NewResolver(storage storage.Storage) *Resolver {
+func NewResolver(userapp *userapp.UserApp) *Resolver {
 	return &Resolver{
-		storage: storage,
-		comLim:  2000,
+		userApp: userapp,
 	}
 }

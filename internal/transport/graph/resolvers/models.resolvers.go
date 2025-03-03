@@ -6,67 +6,19 @@ package resolvers
 
 import (
 	"context"
-	"errors"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/dataloaders"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/utils"
-	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 // Children is the resolver for the children field.
 func (r *commentResolver) Children(ctx context.Context, obj *model.Comment, limit *int, offset *int) ([]*model.Comment, error) {
-	childrenIDs, err := r.storage.GetChildrenIDs(obj.ID)
-	if err != nil && !errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
-		return nil, err
-	}
-
-	loader, ok := ctx.Value(dataloaders.CommentLoaderKey).(*dataloaders.CommentLoader)
-	if !ok {
-		return nil, flowerrors.ErrCommentLoaderNotFound
-	}
-
-	children, errs := loader.LoadAll(ctx, childrenIDs)
-	for _, err := range errs {
-		if err != nil {
-			if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
-				return []*model.Comment{}, nil
-			}
-			return nil, err
-		}
-	}
-
-	paginated := utils.ApplyPagination(children, limit, offset)
-
-	return paginated, nil
+	return nil, nil
 }
 
 // Comments is the resolver for the comments field.
 func (r *postResolver) Comments(ctx context.Context, obj *model.Post, limit *int, offset *int) ([]*model.Comment, error) {
-	commentsIDs, err := r.storage.GetCommentsIDs(obj.ID)
-	if err != nil && !errors.Is(err, flowerrors.ErrCommentsNotFound) {
-		return nil, err
-	}
-
-	loader, ok := ctx.Value(dataloaders.CommentLoaderKey).(*dataloaders.CommentLoader)
-	if !ok {
-		return nil, flowerrors.ErrCommentLoaderNotFound
-	}
-
-	comments, errs := loader.LoadAll(ctx, commentsIDs)
-	for _, err := range errs {
-		if err != nil {
-			if errors.Is(err, flowerrors.ErrCommentChildrenNotFound) {
-				return []*model.Comment{}, nil
-			}
-			return nil, err
-		}
-	}
-
-	paginated := utils.ApplyPagination(comments, limit, offset)
-
-	return paginated, nil
+	return nil, nil
 }
 
 // Comment returns generated.CommentResolver implementation.
@@ -75,5 +27,7 @@ func (r *Resolver) Comment() generated.CommentResolver { return &commentResolver
 // Post returns generated.PostResolver implementation.
 func (r *Resolver) Post() generated.PostResolver { return &postResolver{r} }
 
-type commentResolver struct{ *Resolver }
-type postResolver struct{ *Resolver }
+type (
+	commentResolver struct{ *Resolver }
+	postResolver    struct{ *Resolver }
+)

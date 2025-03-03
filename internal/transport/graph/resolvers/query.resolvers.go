@@ -7,46 +7,38 @@ package resolvers
 import (
 	"context"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/dataloaders"
+	"github.com/vektah/gqlparser/v2/gqlerror"
+
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
-	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 // Post is the resolver for the post field.
 func (r *queryResolver) Post(ctx context.Context, id string) (*model.Post, error) {
-	loader, ok := ctx.Value(dataloaders.PostLoaderKey).(*dataloaders.PostLoader)
-	if !ok {
-		return nil, flowerrors.ErrPostLoaderNotFound
-	}
-	return loader.Load(ctx, id)
+	return nil, nil
 }
 
 // Posts is the resolver for the posts field.
 func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*model.Post, error) {
-	posts, err := r.storage.GetPosts(limit, offset)
-	if err != nil {
-		return nil, err
-	}
-	return posts, nil
+	return nil, nil
 }
 
 // Comment is the resolver for the comment field.
 func (r *queryResolver) Comment(ctx context.Context, id string) (*model.Comment, error) {
-	loader, ok := ctx.Value(dataloaders.CommentLoaderKey).(*dataloaders.CommentLoader)
-	if !ok {
-		return nil, flowerrors.ErrPostLoaderNotFound
-	}
-	return loader.Load(ctx, id)
+	return nil, nil
 }
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	loader, ok := ctx.Value(dataloaders.UserLoaderKey).(*dataloaders.UserLoader)
-	if !ok {
-		return nil, flowerrors.ErrPostLoaderNotFound
+	user, err := r.userApp.GetUser(ctx, id)
+	if err != nil {
+		return nil, gqlerror.Wrap(err)
 	}
-	return loader.Load(ctx, id)
+
+	return &model.User{
+		ID:   user.ID,
+		Name: user.Name,
+	}, nil
 }
 
 // Query returns generated.QueryResolver implementation.

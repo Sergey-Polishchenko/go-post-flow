@@ -7,35 +7,34 @@ package resolvers
 import (
 	"context"
 
+	"github.com/vektah/gqlparser/v2/gqlerror"
+
+	"github.com/Sergey-Polishchenko/go-post-flow/internal/application/userapp"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
-	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 // CreatePost is the resolver for the createPost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.PostInput) (*model.Post, error) {
-	return r.storage.CreatePost(input)
+	return nil, nil
 }
 
 // CreateComment is the resolver for the createComment field.
 func (r *mutationResolver) CreateComment(ctx context.Context, input model.CommentInput) (*model.Comment, error) {
-	if len(input.Text) >= r.comLim {
-		return nil, flowerrors.ErrCommentTooLong
-	}
-
-	comment, err := r.storage.CreateComment(input)
-	if err != nil {
-		return nil, err
-	}
-
-	r.storage.BroadcastComment(comment)
-
-	return comment, nil
+	return nil, nil
 }
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.UserInput) (*model.User, error) {
-	return r.storage.CreateUser(input)
+	user, err := r.userApp.CreateUser(ctx, userapp.CreateUserDTO{Name: input.Name})
+	if err != nil {
+		return nil, gqlerror.Wrap(err)
+	}
+
+	return &model.User{
+		ID:   user.ID,
+		Name: user.Name,
+	}, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

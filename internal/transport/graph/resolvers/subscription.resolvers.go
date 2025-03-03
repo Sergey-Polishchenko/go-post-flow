@@ -7,34 +7,13 @@ package resolvers
 import (
 	"context"
 
-	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/dataloaders"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/generated"
 	"github.com/Sergey-Polishchenko/go-post-flow/internal/transport/graph/model"
-	flowerrors "github.com/Sergey-Polishchenko/go-post-flow/pkg/errors"
 )
 
 // CommentAdded is the resolver for the commentAdded field.
 func (r *subscriptionResolver) CommentAdded(ctx context.Context, postID string) (<-chan *model.Comment, error) {
-	loader, ok := ctx.Value(dataloaders.PostLoaderKey).(*dataloaders.PostLoader)
-	if !ok {
-		return nil, flowerrors.ErrPostLoaderNotFound
-	}
-	_, err := loader.Load(ctx, postID)
-	if err != nil {
-		return nil, err
-	}
-
-	ch := make(chan *model.Comment, 1)
-
-	r.storage.RegisterCommentChannel(postID, ch)
-
-	go func() {
-		<-ctx.Done()
-		r.storage.UnregisterCommentChannel(postID, ch)
-		close(ch)
-	}()
-
-	return ch, nil
+	return nil, nil
 }
 
 // Subscription returns generated.SubscriptionResolver implementation.
